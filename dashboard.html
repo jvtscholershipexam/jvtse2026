@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Student Dashboard | BDS Exam Portal</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+  body { font-family: Arial, sans-serif; background: #eee; margin: 0; }
+  .container {
+    width: 95%;
+    max-width: 600px;
+    background: #fff;
+    margin: 20px auto;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+  }
+  h1 { margin: 10px 0; color:#900; }
+  .status-box {
+    background: #d9e8ff;
+    padding: 12px;
+    margin: 10px 0;
+    border-radius:6px;
+    color:#000;
+    font-size:14px;
+  }
+  button {
+    background: #d11507;
+    color: #fff;
+    padding: 10px 18px;
+    font-size: 15px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+</style>
+
+<!-- Supabase Script -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+</head>
+
+<body>
+<div class="container">
+
+  <h1>Student Dashboard</h1>
+  <p id="loadingText">Loading student info...</p>
+
+  <div class="status-box">
+    Form Status: <span id="formStatus">--</span><br>
+    Payment Status: <span id="paymentStatus">--</span><br>
+    Roll Number: <span id="rollNo">--</span>
+  </div>
+
+  <button onclick="goToApply()">Apply for Exam</button>
+
+</div>
+
+<script>
+  // 🔗 Supabase Init
+  const SUPABASE_URL = "https://yyymjhuwjvyykukfzqow.supabase.co";
+  const SUPABASE_KEY =
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl5eW1qaHV3anZ5eWt1a2Z6cW93Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ2NzMzMjIsImV4cCI6MjA4MDI0OTMyMn0.Ja9Do4cwumTnXx2NGIRW8Ti3rKm4MBiLClQz0xjOtrQ";
+
+  const { createClient } = window.supabase;
+  const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  // 🔐 Login check (Firebase register/login localStorage se)
+  const studentMobile = localStorage.getItem("studentId"); // <-- yahi key login/register me use ho rahi hai
+  if (!studentMobile) {
+    window.location.href = "login.html";
+  }
+
+  // 🎓 Student data load
+  async function loadStudent() {
+    const loadingEl = document.getElementById("loadingText");
+    const formEl    = document.getElementById("formStatus");
+    const payEl     = document.getElementById("paymentStatus");
+    const rollEl    = document.getElementById("rollNo");
+
+    loadingEl.textContent = "Loading student info...";
+
+    const { data, error } = await sb
+      .from("students")
+      .select("*")
+      .eq("mobile", studentMobile)
+      .maybeSingle();
+
+    if (error || !data) {
+      console.error(error);
+      loadingEl.textContent = "No record found. Pehle apply form submit karein.";
+      formEl.textContent = "--";
+      payEl.textContent  = "--";
+      rollEl.textContent = "--";
+      return;
+    }
+
+    loadingEl.style.display = "none";
+
+    // Safe defaults
+    const formStatus  = data.form_status    || "not_applied";
+    const paymentStat = data.payment_status || "pending";
+    const roll        = data.roll_number    || "--";
+
+    formEl.textContent     = formStatus.toUpperCase();
+    paymentStat === "approved"
+      ? payEl.textContent  = "APPROVED"
+      : payEl.textContent  = paymentStat.toUpperCase();
+
+    rollEl.textContent     = roll;
+  }
+
+  loadStudent();
+
+  // ➡ Apply button
+  function goToApply() {
+    window.location.href = "apply.html";
+  }
+</script>
+
+</body>
+</html>

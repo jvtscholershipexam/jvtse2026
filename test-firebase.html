@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Firebase Test</title>
+</head>
+<body>
+  <h2>Firebase Connection Test</h2>
+
+  <button id="saveBtn">Save Test Data</button>
+  <p id="msg"></p>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { 
+      getFirestore, collection, addDoc, serverTimestamp 
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    // Your firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyASkExcBlvX0vijgyT2cWfSuQvZUziM198",
+      authDomain: "bds-exam-portal.firebaseapp.com",
+      projectId: "bds-exam-portal",
+      storageBucket: "bds-exam-portal.firebasestorage.app",
+      messagingSenderId: "937670115018",
+      appId: "1:937670115018:web:226030b502b7fd79487e33"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db  = getFirestore(app);
+
+    const btn = document.getElementById('saveBtn');
+    const msg = document.getElementById('msg');
+
+    btn.addEventListener('click', async () => {
+      msg.textContent = "Saving test data...";
+      msg.style.color = "black";
+
+      try {
+        await addDoc(collection(db, "testCollection"), {
+          message: "Hello from BDS Exam Portal",
+          createdAt: serverTimestamp()
+        });
+
+        msg.textContent = "Success! Data saved in Firestore.";
+        msg.style.color = "green";
+      } catch (err) {
+        console.error(err);
+        msg.textContent = "Error: " + err.message;
+        msg.style.color = "red";
+      }
+    });
+  </script>
+</body>
+</html>

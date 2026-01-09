@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Result | BDS Mega Talent Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{
+      font-family:Arial, sans-serif;
+      background:radial-gradient(circle at top,#1a4fff 0%,#000b33 55%,#000316 100%);
+      color:#fff;
+    }
+    header{
+      background:rgba(0,0,0,.7);
+      padding:8px 14px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      flex-wrap:wrap;
+      border-bottom:2px solid #ffbf00;
+    }
+    .logo-text{font-size:18px;font-weight:bold;letter-spacing:1px;}
+    nav a{
+      color:#fff;
+      text-decoration:none;
+      margin-left:10px;
+      font-size:13px;
+      font-weight:bold;
+    }
+    nav a:hover{text-decoration:underline;}
+
+    .container{max-width:900px;margin:18px auto;padding:0 10px;}
+
+    .card{
+      background:rgba(0,0,0,0.65);
+      padding:14px;
+      border-radius:10px;
+      margin-bottom:15px;
+    }
+    h1{font-size:22px;margin-bottom:6px;}
+    label{display:block;font-size:14px;margin-top:6px;}
+    input{
+      width:100%;
+      padding:7px;
+      border-radius:6px;
+      border:none;
+      margin-top:3px;
+      font-size:14px;
+    }
+    .btn-primary{
+      margin-top:10px;
+      padding:9px 20px;
+      border-radius:999px;
+      border:none;
+      background:#ffbf00;
+      color:#000;
+      font-weight:bold;
+      cursor:pointer;
+      font-size:14px;
+    }
+    .btn-primary:disabled{opacity:.6;cursor:default;}
+    #msgBox{margin-top:8px;font-size:13px;}
+
+    .result-box{
+      background:#001129;
+      border-radius:10px;
+      border:1px solid #ffbf00;
+      padding:12px;
+      margin-top:10px;
+    }
+    .result-row{
+      display:flex;
+      justify-content:space-between;
+      font-size:14px;
+      margin-bottom:4px;
+    }
+    .result-row span.label{font-weight:bold;}
+
+    footer{
+      text-align:center;
+      font-size:12px;
+      padding:10px;
+      background:rgba(0,0,0,.9);
+      margin-top:15px;
+    }
+  </style>
+
+  <!-- Supabase JS -->
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+<header>
+  <div class="logo-text">BABA DEEP SINGH MEGA TALENT HUB</div>
+  <nav>
+    <a href="index.html">HOME</a>
+    <a href="apply.html">APPLY</a>
+    <a href="admit.html">ADMIT CARD</a>
+    <a href="result.html">RESULT</a>
+    <a href="download.html">DOWNLOAD</a>
+    <a href="help.html">HELP</a>
+    <!-- ✅ yahan change kiya: admin.html → admin/login.html -->
+    <a href="admin/login.html">ADMIN</a>
+  </nav>
+</header>
+
+<div class="container">
+  <div class="card">
+    <h1>Check Result</h1>
+    <p style="font-size:13px;color:#ffeaa7;">
+      Result sirf unhi students ka show hoga jinka payment verify ho chuka hai
+      aur jinka result organizer ne publish kar diya hai.
+    </p>
+
+    <label>Roll Number</label>
+    <input type="text" id="rollInput" placeholder="e.g. BDS26XXXX">
+
+    <label>Date of Birth</label>
+    <input type="date" id="dobInput">
+
+    <button class="btn-primary" id="btnGet">Get Result</button>
+    <div id="msgBox"></div>
+
+    <div id="resultArea" style="display:none;">
+      <div class="result-box" id="resultBox"></div>
+    </div>
+  </div>
+</div>
+
+<footer>© 2026 Baba Deep Singh Mega Talent Hub</footer>
+
+<script>
+  // Supabase config (tumhara project)
+  const SUPABASE_URL = "https://yyymjhuwjvyykukfzqow.supabase.co";
+  const SUPABASE_ANON_KEY =
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl5eW1qaHV3anZ5eWt1a2Z6cW93Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ2NzMzMjIsImV4cCI6MjA4MDI0OTMyMn0.Ja9Do4cwumTnXx2NGIRW8Ti3rKm4MBiLClQz0xjOtrQ";
+
+  const { createClient } = supabase;
+  const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  function showMsg(text, color){
+    var box = document.getElementById("msgBox");
+    box.style.color = color || "#fff";
+    box.innerHTML = text;
+  }
+
+  async function getResult(){
+    var roll = document.getElementById("rollInput").value.trim().toUpperCase();
+    var dob  = document.getElementById("dobInput").value;
+    var btn  = document.getElementById("btnGet");
+
+    document.getElementById("resultArea").style.display = "none";
+    document.getElementById("resultBox").innerHTML = "";
+
+    if(!roll || !dob){
+      showMsg("Roll number aur Date of Birth dono fill karein.","#ff8080");
+      return;
+    }
+
+    btn.disabled = true;
+    showMsg("Please wait, record search ho raha hai...","#fff");
+
+    try {
+      // students table se record nikaalo
+      const { data: stu, error } = await sb
+        .from("students")
+        .select("full_name, father_name, roll_number, dob, payment_status, result_published, marks, rank, result_status")
+        .eq("roll_number", roll)
+        .maybeSingle();
+
+      if (error) {
+        console.error(error);
+        showMsg("Error: " + error.message, "#ff8080");
+        btn.disabled = false;
+        return;
+      }
+
+      if (!stu) {
+        showMsg("Record nahi mila. Roll number check karein.","#ff8080");
+        btn.disabled = false;
+        return;
+      }
+
+      // DOB match check (Supabase date 'YYYY-MM-DD' form me hota hai)
+      if (!stu.dob || stu.dob !== dob) {
+        showMsg("DOB match nahi ho rahi. Sahi Date of Birth enter karein.","#ff8080");
+        btn.disabled = false;
+        return;
+      }
+
+      // Payment verification check (payment_status = 'approved')
+      if (stu.payment_status !== "approved") {
+        showMsg(
+          "Aapka payment abhi <b>verify</b> nahi hua hai. " +
+          "Verification ke baad hi result dikhaya jayega.","#ffcc66"
+        );
+        btn.disabled = false;
+        return;
+      }
+
+      // Result publish check
+      if (stu.result_published !== true) {
+        showMsg(
+          "Aapka result abhi publish nahi hua. " +
+          "Result declare hone par yahin par show hoga.","#ffcc66"
+        );
+        btn.disabled = false;
+        return;
+      }
+
+      // Result display
+      var marks  = (stu.marks !== null && stu.marks !== undefined) ? stu.marks : "-";
+      var rank   = (stu.rank  !== null && stu.rank  !== undefined) ? stu.rank  : "-";
+      var status = stu.result_status || "Result Updated";
+
+      var html = "";
+      html += '<div class="result-row"><span class="label">Name:</span><span>'+ (stu.full_name||"") +'</span></div>';
+      html += '<div class="result-row"><span class="label">Roll No:</span><span>'+ (stu.roll_number||"") +'</span></div>';
+      html += '<div class="result-row"><span class="label">Father\'s Name:</span><span>'+ (stu.father_name||"") +'</span></div>';
+      html += '<div class="result-row"><span class="label">Marks:</span><span>'+ marks +'</span></div>';
+      html += '<div class="result-row"><span class="label">Rank:</span><span>'+ rank +'</span></div>';
+      html += '<div class="result-row"><span class="label">Status:</span><span>'+ status +'</span></div>';
+
+      html += '<p style="font-size:11px;margin-top:8px;color:#ffeaa7;">' +
+              'Note: Official result list examiner ke records ke according final hogi.' +
+              '</p>';
+
+      document.getElementById("resultBox").innerHTML = html;
+      document.getElementById("resultArea").style.display = "block";
+      showMsg("Result successfully loaded.","#7CFC00");
+      btn.disabled = false;
+
+    } catch (err) {
+      console.error(err);
+      showMsg("Error: "+ err.message,"#ff8080");
+      btn.disabled = false;
+    }
+  }
+
+  document.getElementById("btnGet").addEventListener("click", getResult);
+</script>
+
+</body>
+</html>

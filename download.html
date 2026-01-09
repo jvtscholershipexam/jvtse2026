@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Download | BDS Mega Talent Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{
+      font-family:Arial, sans-serif;
+      background:radial-gradient(circle at top,#1a4fff 0%,#000b33 55%,#000316 100%);
+      color:#fff;
+    }
+    header{
+      background:rgba(0,0,0,.7);
+      padding:8px 14px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      flex-wrap:wrap;
+      border-bottom:2px solid #ffbf00;
+    }
+    .logo-text{font-size:18px;font-weight:bold;letter-spacing:1px;}
+    nav a{
+      color:#fff;
+      text-decoration:none;
+      margin-left:10px;
+      font-size:13px;
+      font-weight:bold;
+    }
+    nav a:hover{text-decoration:underline;}
+
+    .container{max-width:900px;margin:18px auto;padding:0 10px;}
+    .card{
+      background:rgba(0,0,0,0.65);
+      padding:14px;
+      border-radius:10px;
+      margin-bottom:15px;
+    }
+    h1{font-size:22px;margin-bottom:6px;}
+    h2{font-size:18px;margin:10px 0 6px;color:#ffd84d;}
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+      margin-top:6px;
+      font-size:14px;
+    }
+    th,td{
+      padding:6px 8px;
+      border-bottom:1px solid rgba(255,255,255,.15);
+    }
+    th{text-align:left;background:rgba(0,0,0,.3);}
+    a.btn-download{
+      display:inline-block;
+      padding:5px 10px;
+      border-radius:16px;
+      background:#ffbf00;
+      color:#000;
+      font-size:12px;
+      font-weight:bold;
+      text-decoration:none;
+    }
+    a.btn-download:hover{background:#ffe066;}
+
+    #msgBox{margin-top:6px;font-size:13px;}
+
+    footer{
+      text-align:center;
+      font-size:12px;
+      padding:10px;
+      background:rgba(0,0,0,.9);
+      margin-top:15px;
+    }
+  </style>
+
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+<header>
+  <div class="logo-text">BABA DEEP SINGH MEGA TALENT HUB</div>
+  <nav>
+    <a href="index.html">HOME</a>
+    <a href="apply.html">APPLY</a>
+    <a href="admit.html">ADMIT CARD</a>
+    <a href="result.html">RESULT</a>
+    <a href="download.html">DOWNLOAD</a>
+    <a href="help.html">HELP</a>
+    <a href="admin.html">ADMIN</a>
+  </nav>
+</header>
+
+<div class="container">
+  <div class="card">
+    <h1>Download Section</h1>
+    <p style="font-size:13px;color:#ffeaa7;">
+      Yahan se aap answer key download kar sakte hain — jab exam ho chuka ho.
+    </p>
+
+    <h2>Answer Keys</h2>
+    <div id="msgBox">Loading answer keys...</div>
+
+    <table id="akTable" style="display:none;">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Exam / Paper</th>
+          <th>Uploaded On</th>
+          <th>Download</th>
+        </tr>
+      </thead>
+      <tbody id="akBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<footer>© 2026 Baba Deep Singh Mega Talent Hub</footer>
+
+<script>
+  const SUPABASE_URL = "https://yyymjhuwjvyykukfzqow.supabase.co";
+  const SUPABASE_KEY =
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl5eW1qaHV3anZ5eWt1a2Z6cW93Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ2NzMzMjIsImV4cCI6MjA4MDI0OTMyMn0.Ja9Do4cwumTnXx2NGIRW8Ti3rKm4MBiLClQz0xjOtrQ";
+
+  const { createClient } = supabase;
+  const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  async function loadAnswerKeys(){
+    const msg = document.getElementById("msgBox");
+    const table = document.getElementById("akTable");
+    const body = document.getElementById("akBody");
+
+    msg.innerHTML = "Loading...";
+
+    const { data, error } = await sb
+      .from("answer_keys")
+      .select("*")
+      .order("created_at",{ ascending:false });
+
+    if(error){
+      msg.style.color="#ff8080";
+      msg.innerHTML="Error: "+error.message;
+      return;
+    }
+
+    body.innerHTML="";
+    let i=1;
+
+    data.forEach(row=>{
+      if(row.active===false) return; // hide inactive
+
+      const tr=document.createElement("tr");
+      tr.innerHTML = `
+        <td>${i++}</td>
+        <td>${row.title || "Answer Key"}</td>
+        <td>${row.created_at ? new Date(row.created_at).toLocaleDateString() : "-"}</td>
+        <td>${
+          row.file_url
+            ? `<a class="btn-download" href="${row.file_url}" target="_blank">Download</a>`
+            : "Not Available"
+        }</td>
+      `;
+      body.appendChild(tr);
+    });
+
+    if(i===1){
+      msg.innerHTML="Abhi koi answer key nahi hai.";
+      table.style.display="none";
+    }else{
+      msg.innerHTML="";
+      table.style.display="table";
+    }
+  }
+
+  loadAnswerKeys();
+</script>
+
+</body>
+</html>
