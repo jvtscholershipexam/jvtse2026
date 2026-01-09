@@ -75,7 +75,6 @@
     .btn-primary:disabled{opacity:.6;cursor:default;}
     #msgBox{margin-top:8px;font-size:13px;}
 
-    /* Admit card box */
     #admitArea{display:none;margin-top:12px;}
     .admit-box{
       background:#fff;
@@ -85,10 +84,7 @@
       border:3px double #000;
     }
 
-    /* ek A4 page ke andar do copies */
-    .admit-page{
-      font-size:12px;
-    }
+    .admit-page{font-size:12px;}
     .admit-copy{
       position:relative;
       border:2px solid #000;
@@ -104,7 +100,6 @@
       font-weight:bold;
     }
 
-    /* ===== HEADER (andar wala) ===== */
     .admit-header{
       padding-bottom:4px;
       border-bottom:1px solid #aaa;
@@ -137,7 +132,6 @@
       margin-top:2px;
     }
 
-    /* top area: left details + right photo */
     .top-area{
       display:flex;
       justify-content:space-between;
@@ -145,9 +139,7 @@
       margin:4px 0;
       align-items:flex-start;
     }
-    .top-left{
-      flex:1 1 auto;
-    }
+    .top-left{flex:1 1 auto;}
     .photo-box{
       width:80px;
       height:95px;
@@ -230,9 +222,7 @@
     }
   </style>
 
-  <!-- Supabase JS -->
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-  <!-- PDF libraries -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
@@ -256,14 +246,8 @@
 <div class="container">
   <div class="card">
     <h1>Download Admit Card</h1>
-    <p style="font-size:13px;color:#ffeaa7;margin-bottom:4px;">
-      Admit card sirf unhi students ka show hoga jinka payment organizer
-      ki taraf se <b>verify</b> ho chuka hai aur jinhe exam centre allot kar
-      diya gaya hai.
-    </p>
-
     <label>Roll Number</label>
-    <input type="text" id="rollInput" placeholder="e.g. BDS26XXXX">
+    <input type="text" id="rollInput">
 
     <label>Date of Birth</label>
     <input type="date" id="dobInput">
@@ -272,262 +256,18 @@
     <button class="btn-primary" id="btnDownload" style="display:none;">Download Admit Card (PDF)</button>
 
     <div id="msgBox"></div>
-
-    <div id="admitArea">
-      <div class="admit-box" id="admitBox"></div>
-    </div>
-
-    <p style="margin-top:8px;font-size:12px;color:#ffeaa7;">
-      Aapki registration abhi <b>PENDING / FAILED</b> hai to organizer payment
-      verify karne ke baad hi admit card active hoga.
-    </p>
+    <div id="admitArea"><div class="admit-box" id="admitBox"></div></div>
   </div>
 </div>
 
 <footer>© 2026 Baba Deep Singh Mega Talent Hub</footer>
 
 <script>
-  // ==== Supabase config ====
-  const SUPABASE_URL = "https://yyymjhuwjvyykukfzqow.supabase.co";
-  const SUPABASE_ANON_KEY =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl5eW1qaHV3anZ5eWt1a2Z6cW93Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ2NzMzMjIsImV4cCI6MjA4MDI0OTMyMn0.Ja9Do4cwumTnXx2NGIRW8Ti3rKm4MBiLClQz0xjOtrQ";
+  const SUPABASE_URL = "https://iqcbgiwycbuyvxpegmfg.supabase.co";
+  const SUPABASE_ANON_KEY = "sb_publishable_BCvr1Fx0v1JgAWVE90ittw_bThpVl8C";
 
   const { createClient } = supabase;
   const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-  // Exam static info
-  const EXAM_NAME   = "Future Achievers Scholarship Exam 2026";
-  const EXAM_DATE   = "08-02-2026";
-  const EXAM_TIME   = "11:00 AM – 12:30 PM";
-  const REPORT_TIME = "10:00 AM";
-
-  function showMsg(text, color){
-    const box = document.getElementById("msgBox");
-    box.style.color = color || "#fff";
-    box.innerHTML = text;
-  }
-
-  document.getElementById("btnGet").addEventListener("click", getAdmit);
-
-  async function getAdmit(){
-    const roll = document.getElementById("rollInput").value.trim().toUpperCase();
-    const dob  = document.getElementById("dobInput").value;
-    const btn  = document.getElementById("btnGet");
-    const btnDownload = document.getElementById("btnDownload");
-
-    document.getElementById("admitArea").style.display = "none";
-    document.getElementById("admitBox").innerHTML = "";
-    btnDownload.style.display = "none";
-
-    if(!roll || !dob){
-      showMsg("Roll number aur Date of Birth dono fill karein.","#ff8080");
-      return;
-    }
-
-    btn.disabled = true;
-    showMsg("Please wait, record search ho raha hai...","#fff");
-
-    try{
-      const { data: stu, error } = await sb
-        .from("students")
-        .select("full_name, father_name, roll_number, dob, mobile, qualification, address, payment_status, exam_center, admit_allowed, photo_path")
-        .eq("roll_number", roll)
-        .maybeSingle();
-
-      if(error){
-        console.error(error);
-        showMsg("Error: " + error.message, "#ff8080");
-        btn.disabled = false;
-        return;
-      }
-
-      if(!stu){
-        showMsg("Record nahi mila. Roll number check karein.","#ff8080");
-        btn.disabled = false;
-        return;
-      }
-
-      if(!stu.dob || stu.dob !== dob){
-        showMsg("DOB match nahi ho rahi. Sahi Date of Birth enter karein.","#ff8080");
-        btn.disabled = false;
-        return;
-      }
-
-      const payStatus = (stu.payment_status || "").toString().toLowerCase();
-      const okPay = ["approved","success","successful","verified","paid"];
-
-      if(!okPay.includes(payStatus)){
-        showMsg(
-          "Aapki registration abhi <b>PENDING / FAILED</b> hai. " +
-          "Organizer payment verify karne ke baad hi admit card active hoga.",
-          "#ffcc66"
-        );
-        btn.disabled = false;
-        return;
-      }
-
-      if (!stu.admit_allowed) {
-        showMsg(
-          "Aapka exam centre / admit card abhi activate nahi hua. Organizer se sampark karein.",
-          "#ffcc66"
-        );
-        btn.disabled = false;
-        return;
-      }
-
-      if (!stu.exam_center || !stu.exam_center.trim()) {
-        showMsg(
-          "Exam centre detail abhi set nahi hai. Organizer se sampark karein.",
-          "#ffcc66"
-        );
-        btn.disabled = false;
-        return;
-      }
-
-      // Photo URL (student_docs bucket)
-      let photoUrl = "";
-      if (stu.photo_path) {
-        const { data: pub } = sb
-          .storage
-          .from("student_docs")
-          .getPublicUrl(stu.photo_path);
-        if (pub && pub.publicUrl) {
-          photoUrl = pub.publicUrl;
-        }
-      }
-
-      const box = document.getElementById("admitBox");
-
-      const baseCopy = (copyType) => `
-        <div class="admit-copy">
-          <div class="watermark">BDS EXAM</div>
-
-          <div class="copy-label">${copyType}</div>
-
-          <div class="admit-header">
-            <div class="admit-header-inner">
-              <img src="bds-logo.png" alt="Logo" class="admit-header-logo">
-              <div class="admit-header-center">
-                <h2>${EXAM_NAME}</h2>
-                <div><b>BABA DEEP SINGH MEGA TALENT HUB</b></div>
-                <div>Sangariya, District Hanumangarh (Raj.)</div>
-              </div>
-              <img src="bds-logo.png" alt="Logo" class="admit-header-logo">
-            </div>
-            <div class="copy-type-text">${copyType}</div>
-          </div>
-
-          <div class="top-area">
-            <div class="top-left">
-              <div class="admit-row">
-                <span class="label">Name:</span>
-                <span>${stu.full_name || ""}</span>
-              </div>
-              <div class="admit-row">
-                <span class="label">Father Name:</span>
-                <span>${stu.father_name || ""}</span>
-              </div>
-              <div class="admit-row">
-                <span class="label">Roll No:</span>
-                <span>${stu.roll_number || ""}</span>
-              </div>
-              <div class="admit-row">
-                <span class="label">Mobile:</span>
-                <span>${stu.mobile || ""}</span>
-              </div>
-              <div class="admit-row">
-                <span class="label">Qualification:</span>
-                <span>${stu.qualification || ""}</span>
-              </div>
-              <div class="admit-row">
-                <span class="label">Centre:</span>
-                <span>${stu.exam_center}</span>
-              </div>
-            </div>
-
-            <div class="photo-box">
-              ${
-                photoUrl
-                  ? `<img src="${photoUrl}" alt="Student Photo" crossorigin="anonymous">`
-                  : `<div class="photo-placeholder">Photo Not Available</div>`
-              }
-            </div>
-          </div>
-
-          <div class="admit-row">
-            <span class="label">Exam Date:</span>
-            <span>${EXAM_DATE}</span>
-          </div>
-          <div class="admit-row">
-            <span class="label">Exam Time:</span>
-            <span>${EXAM_TIME}</span>
-          </div>
-          <div class="admit-row">
-            <span class="label">Reporting Time:</span>
-            <span>${REPORT_TIME}</span>
-          </div>
-
-          <div class="sign-row">
-            <div class="sign-cell">
-              <span class="sign-line"></span>
-              Student Signature
-            </div>
-            <div class="sign-cell">
-              <img src="bds-seal.png" alt="Seal & Signature" class="seal-img">
-              <div style="font-size:10px;margin-top:2px;">
-                Authorized Signatory<br>
-                Sukhvinder Singh<br>
-                Baba Deep Singh Fitness Club
-              </div>
-              <span class="sign-line" style="margin-top:16px;"></span>
-              Invigilator Signature
-            </div>
-          </div>
-
-          <div class="admit-footer">
-            Carry this admit card along with Aadhaar to the examination centre.
-          </div>
-        </div>
-      `;
-
-      const html = `
-        <div class="admit-page">
-          ${baseCopy("EXAM (Student Copy)")}
-          ${baseCopy("EXAM (Office Copy)")}
-        </div>
-      `;
-
-      box.innerHTML = html;
-      document.getElementById("admitArea").style.display = "block";
-      document.getElementById("btnDownload").style.display = "inline-block";
-      showMsg("Admit card successfully loaded.","#7CFC00");
-      btn.disabled = false;
-    }catch(err){
-      console.error(err);
-      showMsg("Error: " + err.message,"#ff8080");
-      btn.disabled = false;
-    }
-  }
-
-  // PDF download
-  document.getElementById("btnDownload").addEventListener("click", async () => {
-    const admitBox = document.getElementById("admitBox");
-    if (!admitBox.innerHTML.trim()) return;
-
-    const { jsPDF } = window.jspdf;
-    const pdf = new jsPDF("p","mm","a4");
-
-    const canvas = await html2canvas(admitBox, { scale:2, useCORS:true });
-    const imgData = canvas.toDataURL("image/png");
-
-    const pageWidth = 210;
-    const margin = 10;
-    const imgWidth = pageWidth - margin * 2;
-    const imgHeight = canvas.height * imgWidth / canvas.width;
-
-    pdf.addImage(imgData, "PNG", margin, 10, imgWidth, imgHeight);
-    pdf.save("BDS_Admit_Card.pdf");
-  });
 </script>
 
 </body>
