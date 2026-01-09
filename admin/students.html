@@ -2,28 +2,73 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Admin – Student Applications</title>
+<title>Admin – Student Applications | 2026 Jai Veer Tejaji Club</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
-body{font-family:Arial;background:#f4f4f4;margin:0}
-.container{max-width:1200px;margin:15px auto;background:#fff;padding:15px;border-radius:8px}
-h1{color:#b20c0c;margin-bottom:10px}
-table{width:100%;border-collapse:collapse;font-size:13px}
-th,td{border:1px solid #ddd;padding:6px;text-align:left}
-th{background:#eee}
-button{padding:5px 8px;border:none;border-radius:4px;cursor:pointer;font-size:12px}
+body{
+  font-family:Arial;
+  background:#f6fff7;
+  margin:0
+}
+.container{
+  max-width:1200px;
+  margin:15px auto;
+  background:#ffffff;
+  padding:15px;
+  border-radius:10px;
+  border:2px solid #0b4d2b
+}
+h1{
+  color:#0b4d2b;
+  margin-bottom:10px
+}
+table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:13px
+}
+th,td{
+  border:1px solid #cfded2;
+  padding:6px;
+  text-align:left
+}
+th{
+  background:#e8f5ec
+}
+button{
+  padding:5px 8px;
+  border:none;
+  border-radius:4px;
+  cursor:pointer;
+  font-size:12px
+}
 .view{background:#1976d2;color:#fff}
 .del{background:#c62828;color:#fff}
 .edit{background:#6a1b9a;color:#fff}
 .approve{background:#2e7d32;color:#fff}
 .pending{background:#ffa000}
 .reject{background:#c62828;color:#fff}
-.section{margin-top:12px;border-top:1px solid #ccc;padding-top:8px}
+.section{
+  margin-top:12px;
+  border-top:1px solid #cfded2;
+  padding-top:8px
+}
 label{font-size:13px}
-input{width:100%;padding:5px;margin-top:2px}
-.msg{font-size:13px;margin-top:6px}
-a{color:#1976d2}
+input{
+  width:100%;
+  padding:5px;
+  margin-top:2px
+}
+.msg{
+  font-size:13px;
+  margin-top:6px
+}
+a{
+  color:#0b4d2b;
+  font-weight:bold;
+  text-decoration:none
+}
 </style>
 
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
@@ -34,7 +79,7 @@ a{color:#1976d2}
 <div class="container">
 
 <a href="dashboard.html">← Admin Home</a>
-<h1>Student Applications</h1>
+<h1>Student Applications – 2026 Jai Veer Tejaji Club</h1>
 
 <button onclick="downloadExcel()">⬇ Download Excel</button>
 <p id="listMsg">Loading...</p>
@@ -110,8 +155,8 @@ Payment Screenshot: <a id="dPSS" target="_blank">Not uploaded</a>
 
 <script>
 const sb = supabase.createClient(
- "https://yyymjhuwjvyykukfzqow.supabase.co",
- "sb_publishable_AotK9XHnYF0UmfJYrS7GCg_BHXVvzy0"
+ "https://iqcbgiwycbuyvxpegmfg.supabase.co",
+ "sb_publishable_BCvr1Fx0v1JgAWVE90ittw_bThpVl8C"
 );
 
 let currentId = null;
@@ -173,10 +218,7 @@ async function editName(id, oldName){
   .update({ full_name: newName })
   .eq("id", id);
 
- if(error){
-  alert(error.message);
-  return;
- }
+ if(error){ alert(error.message); return; }
 
  alert("Name updated");
  load();
@@ -199,13 +241,13 @@ function openDetail(s){
  currentId = s.id;
  detailBox.style.display="block";
 
- dName.innerText   = s.full_name || "";
- dFather.innerText = s.father_name || "";
- dMobile.innerText = s.mobile || "";
- dRoll.innerText   = s.roll_number || "";
- dLevel.innerText  = s.exam_level || "";
- dStatus.innerText = s.form_status || "";
- dPayment.innerText= s.payment_status || "";
+ dName.innerText=s.full_name||"";
+ dFather.innerText=s.father_name||"";
+ dMobile.innerText=s.mobile||"";
+ dRoll.innerText=s.roll_number||"";
+ dLevel.innerText=s.exam_level||"";
+ dStatus.innerText=s.form_status||"";
+ dPayment.innerText=s.payment_status||"";
 
  setLink(dPhoto,s.photo_path);
  setLink(dAF,s.aadhar_front_path);
@@ -214,7 +256,7 @@ function openDetail(s){
  setLink(dPSS,s.payment_screenshot_path);
 }
 
-/* STATUS UPDATE */
+/* STATUS */
 async function setStatus(status,pay){
  if(!currentId) return alert("Click VIEW first");
 
@@ -266,10 +308,10 @@ async function downloadExcel(){
   .select("full_name,roll_number,mobile,exam_level");
 
  const rows=data.map(s=>({
-  Name: s.full_name || "",
-  Roll: s.roll_number,
-  Mobile: s.mobile,
-  ExamLevel: s.exam_level
+  Name:s.full_name||"",
+  Roll:s.roll_number,
+  Mobile:s.mobile,
+  ExamLevel:s.exam_level
  }));
 
  const ws=XLSX.utils.json_to_sheet(rows);
