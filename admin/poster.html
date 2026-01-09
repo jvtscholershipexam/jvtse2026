@@ -1,157 +1,153 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Admin - Home Poster</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="UTF-8">
+<title>Admin - Home Poster | 2026 Jai Veer Tejaji Club</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <style>
-    *{box-sizing:border-box;margin:0;padding:0;}
-    body{
-      font-family:Arial, sans-serif;
-      background:radial-gradient(circle at top,#1a4fff 0%,#000b33 55%,#000316 100%);
-      color:#fff;
-    }
-    header{
-      background:rgba(0,0,0,.8);
-      padding:8px 14px;
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      flex-wrap:wrap;
-      border-bottom:2px solid #ffbf00;
-    }
-    .logo-text{font-size:18px;font-weight:bold;}
-    a.back{
-      color:#ffbf00;
-      text-decoration:none;
-      font-size:13px;
-    }
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  font-family:Arial, sans-serif;
+  background:radial-gradient(circle at top,#0b4d2b 0%,#032015 60%,#02140d 100%);
+  color:#fff;
+}
+header{
+  background:rgba(0,0,0,.85);
+  padding:8px 14px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+  border-bottom:2px solid #d4af37;
+}
+.logo-text{
+  font-size:18px;
+  font-weight:bold;
+  color:#ffd65a;
+}
+a.back{
+  color:#ffd65a;
+  text-decoration:none;
+  font-size:13px;
+  font-weight:bold;
+}
 
-    .container{max-width:900px;margin:18px auto;padding:0 10px;}
-    .card{
-      background:rgba(0,0,0,0.7);
-      padding:14px;
-      border-radius:10px;
-      border:1px solid rgba(255,255,255,.2);
-    }
-    h1{font-size:22px;margin-bottom:6px;}
-    label{display:block;font-size:14px;margin-top:6px;}
-    input[type="file"]{
-      margin-top:4px;
-      font-size:13px;
-    }
-    .btn-primary{
-      margin-top:10px;
-      padding:9px 20px;
-      border-radius:999px;
-      border:none;
-      background:#ffbf00;
-      color:#000;
-      font-weight:bold;
-      cursor:pointer;
-      font-size:14px;
-    }
-    .btn-primary:disabled{
-      opacity:.6;
-      cursor:not-allowed;
-    }
-    #msgBox{margin-top:6px;font-size:13px;}
-    #preview{
-      margin-top:10px;
-      text-align:center;
-    }
-    #preview img{
-      max-width:260px;
-      border-radius:10px;
-      border:2px solid #ffbf00;
-      box-shadow:0 0 15px rgba(0,0,0,.7);
-    }
-  </style>
+.container{max-width:900px;margin:18px auto;padding:0 10px;}
+.card{
+  background:rgba(0,0,0,0.75);
+  padding:14px;
+  border-radius:10px;
+  border:1px solid rgba(255,255,255,.2);
+}
+h1{font-size:22px;margin-bottom:6px;color:#ffd65a;}
+label{display:block;font-size:14px;margin-top:6px;}
+input[type="file"]{
+  margin-top:4px;
+  font-size:13px;
+  color:#fff;
+}
+.btn-primary{
+  margin-top:10px;
+  padding:9px 20px;
+  border-radius:999px;
+  border:none;
+  background:#d4af37;
+  color:#000;
+  font-weight:bold;
+  cursor:pointer;
+  font-size:14px;
+}
+.btn-primary:disabled{
+  opacity:.6;
+  cursor:not-allowed;
+}
+#msgBox{margin-top:6px;font-size:13px;}
+#preview{
+  margin-top:12px;
+  text-align:center;
+}
+#preview img{
+  max-width:260px;
+  border-radius:12px;
+  border:2px solid #d4af37;
+  box-shadow:0 0 18px rgba(0,0,0,.8);
+}
+</style>
 </head>
+
 <body>
 
 <header>
-  <div class="logo-text">Admin — Home Flex / Poster</div>
+  <div class="logo-text">Admin — 2026 Jai Veer Tejaji Club</div>
   <a class="back" href="dashboard.html">&larr; Back to Dashboard</a>
 </header>
 
 <div class="container">
   <div class="card">
     <h1>Change Home Page Poster</h1>
-    <p style="font-size:13px;color:#ffeaa7;">
-      Yahan se aap <b>direct image file upload</b> karoge.  
-      Supabase storage me save hogi, aur home page par naya poster automatic dikhega.
+    <p style="font-size:13px;color:#ffe8a3;">
+      Yahan se aap <b>home page ka flex / poster</b> upload kar sakte hain.  
+      Upload hote hi website ke home page par naya poster dikhne lagega.
     </p>
 
-    <label>Choose Poster Image (JPG/PNG)</label>
+    <label>Choose Poster Image (JPG / PNG)</label>
     <input type="file" id="posterFile" accept="image/*">
 
-    <button class="btn-primary" id="uploadBtn">Upload &amp; Save Poster</button>
+    <button class="btn-primary" id="uploadBtn">Upload & Save Poster</button>
     <div id="msgBox"></div>
 
     <div id="preview">
-      <p style="font-size:13px;margin-bottom:4px;">Current Preview:</p>
-      <!-- Default flex.jpg, baad me Supabase se latest image_url aa jayega -->
+      <p style="font-size:13px;margin-bottom:6px;">Current Poster Preview</p>
       <img id="posterPreview" src="../flex.jpg" alt="Current Poster">
     </div>
   </div>
 </div>
 
-<!-- Supabase JS v2 (browser) -->
+<!-- Supabase JS -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.48.0/dist/umd/supabase.min.js"></script>
 <script>
-  // 🔐 Admin login guard
+  // 🔐 Admin guard
   if (localStorage.getItem("bdsAdminLoggedIn") !== "yes") {
     window.location.href = "login.html";
   }
 
-  // Supabase client
-  const SUPABASE_URL = "https://yyymjhuwjvyykukfzqow.supabase.co";
-  const SUPABASE_KEY =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl5eW1qaHV3anZ5eWt1a2Z6cW93Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ2NzMzMjIsImV4cCI6MjA4MDI0OTMyMn0.Ja9Do4cwumTnXx2NGIRW8Ti3rKm4MBiLClQz0xjOtrQ";
+  // 🔗 Supabase (NEW PROJECT)
+  const SUPABASE_URL = "https://iqcbgiwycbuyvxpegmfg.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_BCvr1Fx0v1JgAWVE90ittw_bThpVl8C";
 
-  const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  const supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
 
   const fileInput = document.getElementById("posterFile");
   const uploadBtn = document.getElementById("uploadBtn");
   const msgBox    = document.getElementById("msgBox");
   const preview   = document.getElementById("posterPreview");
 
-  function showMsg(t,c){
-    msgBox.style.color = c || "#fff";
-    msgBox.innerHTML = t;
+  function showMsg(text,color){
+    msgBox.style.color = color || "#fff";
+    msgBox.innerHTML = text;
   }
 
-  // 🔄 Latest poster load karke preview me dikhao
+  // 🔄 Load latest poster
   async function loadCurrentPoster(){
-    try{
-      const { data, error } = await supabaseClient
-        .from("flex_banners")
-        .select("image_url, created_at")
-        .order("created_at",{ ascending:false })
-        .limit(1)
-        .maybeSingle();
+    const { data, error } = await supabaseClient
+      .from("flex_banners")
+      .select("image_url")
+      .order("created_at",{ascending:false})
+      .limit(1)
+      .maybeSingle();
 
-      if(error){
-        console.log("Load poster error:", error.message);
-        return;
-      }
-
-      if(data && data.image_url){
-        preview.src = data.image_url;
-      }else{
-        preview.src = "../flex.jpg"; // default local flex
-      }
-    }catch(err){
-      console.log("Load poster error:", err.message || err);
+    if(data && data.image_url){
+      preview.src = data.image_url;
     }
   }
-
   loadCurrentPoster();
 
-  // 📤 Upload & Save Poster
-  uploadBtn.addEventListener("click", async () => {
+  // 📤 Upload poster
+  uploadBtn.addEventListener("click", async ()=>{
     const file = fileInput.files[0];
     if(!file){
       showMsg("Please select an image file.","#ff8080");
@@ -159,50 +155,35 @@
     }
 
     uploadBtn.disabled = true;
-    showMsg("Uploading poster, please wait...","#fff");
+    showMsg("Uploading poster, please wait...");
 
     try{
-      // 1) Storage me upload (bucket: flex)
-      const cleanName = file.name.replace(/\s+/g,"");
-      const filePath  = Date.now() + "_" + cleanName;
+      const filePath = Date.now()+"_"+file.name.replace(/\s+/g,"");
 
-      const { data: uploadData, error: uploadErr } = await supabaseClient
+      const { error: upErr } = await supabaseClient
         .storage
-        .from("flex")       // ✅ bucket name bilkul same
-        .upload(filePath, file, {
-          cacheControl: "3600",
-          upsert: true
-        });
+        .from("flex")
+        .upload(filePath, file, { upsert:true });
 
-      if(uploadErr){
-        throw uploadErr;
-      }
+      if(upErr) throw upErr;
 
-      // 2) Public URL nikalo
-      const { data: publicData } = supabaseClient
+      const { data: pub } = supabaseClient
         .storage
         .from("flex")
         .getPublicUrl(filePath);
 
-      const publicUrl = publicData.publicUrl;
-
-      // 3) flex_banners table me entry (sirf image_url enough hai)
-      const { error: insertErr } = await supabaseClient
+      const { error: insErr } = await supabaseClient
         .from("flex_banners")
-        .insert({ image_url: publicUrl });
+        .insert({ image_url: pub.publicUrl });
 
-      if(insertErr){
-        throw insertErr;
-      }
+      if(insErr) throw insErr;
 
-      // 4) Preview update
-      preview.src = publicUrl;
-      showMsg("Poster uploaded &amp; saved successfully! Home page par bhi naya poster dikhega.","#22c55e");
-      fileInput.value = "";
+      preview.src = pub.publicUrl;
+      showMsg("Poster successfully updated!","#7CFC00");
+      fileInput.value="";
 
     }catch(err){
-      console.error(err);
-      showMsg("Error: " + (err.message || err),"#ff8080");
+      showMsg("Error: "+err.message,"#ff8080");
     }finally{
       uploadBtn.disabled = false;
     }
