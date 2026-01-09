@@ -2,92 +2,111 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Student Registration | BDS Exam Portal</title>
+  <title>Student Registration | 2026 Jai Veer Tejaji Club</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f5f5f5;
+      background: radial-gradient(circle at top, #0b4d2b, #032015);
       margin: 0;
       padding: 0;
     }
+
     .container {
       max-width: 420px;
       margin: 40px auto;
-      background: #ffffff;
+      background: rgba(0,0,0,0.75);
       padding: 20px 25px;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      border-radius: 10px;
+      box-shadow: 0 0 12px rgba(0,0,0,0.6);
+      color: #fff;
     }
+
     h2 {
       margin-top: 0;
       text-align: center;
-      color: #b20c0c;
+      color: #ffd65a;
+      font-weight: 900;
     }
+
     label {
       font-size: 14px;
       display: block;
       margin-bottom: 4px;
     }
+
     input {
       width: 100%;
       padding: 8px 10px;
       margin-bottom: 12px;
-      border-radius: 4px;
-      border: 1px solid #ccc;
+      border-radius: 6px;
+      border: none;
       font-size: 14px;
       box-sizing: border-box;
     }
+
     button {
       width: 100%;
       padding: 10px;
       border: none;
-      border-radius: 4px;
-      background: #b20c0c;
-      color: #fff;
+      border-radius: 25px;
+      background: #d4af37;
+      color: #000;
       font-size: 15px;
+      font-weight: bold;
       cursor: pointer;
     }
+
     button:disabled {
       opacity: 0.6;
       cursor: not-allowed;
     }
+
     .msg {
       margin-top: 10px;
       font-size: 14px;
+      text-align: center;
     }
+
     .small {
       font-size: 12px;
       text-align: center;
       margin-top: 12px;
     }
+
     a {
-      color: #b20c0c;
+      color: #ffd65a;
       text-decoration: none;
+      font-weight: bold;
     }
   </style>
+
+  <!-- Supabase JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
+
   <div class="container">
-    <h2>Student Registration</h2>
+    <h2>2026 Jai Veer Tejaji Club<br>Student Registration</h2>
 
     <form id="registerForm">
-      <label for="name">Full Name *</label>
+      <label>Full Name *</label>
       <input type="text" id="name" required>
 
-      <label for="mobile">Mobile Number (Login ID) *</label>
+      <label>Mobile Number (Login ID) *</label>
       <input type="tel" id="mobile" maxlength="10" required placeholder="10 digit mobile">
 
-      <label for="email">Email (optional)</label>
+      <label>Email (optional)</label>
       <input type="email" id="email" placeholder="example@gmail.com">
 
-      <label for="fatherName">Father Name *</label>
+      <label>Father Name *</label>
       <input type="text" id="fatherName" required>
 
-      <label for="password">Create Password *</label>
+      <label>Create Password *</label>
       <input type="password" id="password" required minlength="6" placeholder="Minimum 6 characters">
 
-      <label for="confirmPassword">Confirm Password *</label>
+      <label>Confirm Password *</label>
       <input type="password" id="confirmPassword" required minlength="6">
 
       <button type="submit" id="submitBtn">Register</button>
@@ -100,114 +119,104 @@
     </p>
   </div>
 
-  <!-- Supabase JS (CDN) -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    // Supabase client
     const { createClient } = supabase;
 
-    const SUPABASE_URL = "https://yyymjhuwjvyykukfzqow.supabase.co";
-    const SUPABASE_KEY =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl5eW1qaHV3anZ5eWt1a2Z6cW93Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ2NzMzMjIsImV4cCI6MjA4MDI0OTMyMn0.Ja9Do4cwumTnXx2NGIRW8Ti3rKm4MBiLClQz0xjOtrQ";
+    // ✅ NEW SUPABASE
+    const SUPABASE_URL = "https://iqcbgiwycbuyvxpegmfg.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_BCvr1Fx0v1JgAWVE90ittw_bThpVl8C";
 
     const db = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    const form      = document.getElementById('registerForm');
-    const msgEl     = document.getElementById('msg');
-    const submitBtn = document.getElementById('submitBtn');
+    const form      = document.getElementById("registerForm");
+    const msgEl     = document.getElementById("msg");
+    const submitBtn = document.getElementById("submitBtn");
 
-    form.addEventListener('submit', async (e) => {
+    form.addEventListener("submit", async (e) => {
       e.preventDefault();
       msgEl.textContent = "";
-      msgEl.style.color = "black";
+      msgEl.style.color = "#fff";
 
-      const name       = document.getElementById('name').value.trim();
-      const mobile     = document.getElementById('mobile').value.trim();
-      const email      = document.getElementById('email').value.trim();
-      const fatherName = document.getElementById('fatherName').value.trim();
-      const password   = document.getElementById('password').value;
-      const cPassword  = document.getElementById('confirmPassword').value;
+      const name       = document.getElementById("name").value.trim();
+      const mobile     = document.getElementById("mobile").value.trim();
+      const email      = document.getElementById("email").value.trim();
+      const fatherName = document.getElementById("fatherName").value.trim();
+      const password   = document.getElementById("password").value;
+      const cPassword  = document.getElementById("confirmPassword").value;
 
-      // Basic checks
       if (!name || !fatherName) {
         msgEl.textContent = "Name aur Father Name required hain.";
-        msgEl.style.color = "red";
+        msgEl.style.color = "#ff8080";
         return;
       }
 
       if (mobile.length !== 10 || !/^[0-9]+$/.test(mobile)) {
-        msgEl.textContent = "Please enter valid 10 digit mobile number.";
-        msgEl.style.color = "red";
+        msgEl.textContent = "Valid 10 digit mobile number daalein.";
+        msgEl.style.color = "#ff8080";
         return;
       }
+
       if (password.length < 6) {
         msgEl.textContent = "Password minimum 6 characters ka hona chahiye.";
-        msgEl.style.color = "red";
+        msgEl.style.color = "#ff8080";
         return;
       }
+
       if (password !== cPassword) {
         msgEl.textContent = "Password aur Confirm Password match nahi kar rahe.";
-        msgEl.style.color = "red";
+        msgEl.style.color = "#ff8080";
         return;
       }
 
       submitBtn.disabled = true;
       msgEl.textContent = "Please wait, registering...";
-      msgEl.style.color = "black";
 
       try {
-        // 1) Check already registered (mobile unique)
-        const { data: existing, error: checkErr } = await db
+        const { data: existing } = await db
           .from("students")
           .select("id")
           .eq("mobile", mobile)
           .maybeSingle();
 
-        if (checkErr) throw checkErr;
-
         if (existing) {
-          msgEl.textContent = "Ye mobile number already registered hai. Please login karein.";
-          msgEl.style.color = "red";
+          msgEl.textContent = "Ye mobile number already registered hai. Login karein.";
+          msgEl.style.color = "#ff8080";
           submitBtn.disabled = false;
           return;
         }
 
-        // 2) Insert new student (login ke liye basic data + password)
-        const { data: inserted, error: insErr } = await db
+        const { error } = await db
           .from("students")
           .insert({
             full_name: name,
             father_name: fatherName,
             mobile: mobile,
             email: email || null,
-            login_password: password,      // ✅ students table ka password column
-            form_status: "not_applied",    // default stage
-            payment_status: "pending"      // abhi payment nahi hua
-          })
-          .select("id")
-          .single();
+            login_password: password,
+            form_status: "not_applied",
+            payment_status: "pending"
+          });
 
-        if (insErr) throw insErr;
+        if (error) throw error;
 
-        // 3) Save login info browser me (index + dashboard ke liye)
         localStorage.setItem("student_mobile", mobile);
-        // Apply button (index.html) ke liye (yahi check ho raha tha)
         localStorage.setItem("studentId", mobile);
 
-        msgEl.textContent = "Registration successful! Please remember your Mobile & Password.";
-        msgEl.style.color = "green";
+        msgEl.textContent = "Registration successful!";
+        msgEl.style.color = "#7CFC00";
 
         setTimeout(() => {
           window.location.href = "dashboard.html";
-        }, 1500);
+        }, 1200);
 
       } catch (err) {
         console.error(err);
-        msgEl.textContent = "Kuch error aayi, thodi der baad phir try karein.";
-        msgEl.style.color = "red";
+        msgEl.textContent = "Kuch error aayi, baad me try karein.";
+        msgEl.style.color = "#ff8080";
         submitBtn.disabled = false;
       }
     });
   </script>
+
 </body>
 </html>
