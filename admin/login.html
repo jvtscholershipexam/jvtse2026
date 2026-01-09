@@ -2,14 +2,14 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>BDS Admin Login</title>
+  <title>2026 Jai Veer Tejaji Club | Admin Login</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <style>
     body{
       margin:0;
       font-family:Arial, sans-serif;
-      background:#001532;
+      background:#032015;
       color:#fff;
       display:flex;
       justify-content:center;
@@ -23,11 +23,12 @@
       width:320px;
       text-align:center;
       box-shadow:0 0 20px #000;
+      border:1px solid rgba(255,255,255,0.15);
     }
     h1{
-      margin:0 0 8px;
+      margin:0 0 6px;
       font-size:20px;
-      color:#ffca28;
+      color:#ffd65a;
     }
     p.subtitle{
       margin:0 0 14px;
@@ -48,7 +49,7 @@
       margin-top:12px;
       border:none;
       border-radius:999px;
-      background:#ffbf00;
+      background:#d4af37;
       color:#000;
       font-size:14px;
       font-weight:bold;
@@ -60,6 +61,7 @@
       font-size:12px;
       margin-top:6px;
       text-align:left;
+      color:#e6e6e6;
     }
     #msg{
       font-size:13px;
@@ -67,9 +69,9 @@
     }
     a.back-link{
       display:inline-block;
-      margin-top:8px;
+      margin-top:10px;
       font-size:12px;
-      color:#9ecbff;
+      color:#ffd65a;
       text-decoration:none;
     }
     a.back-link:hover{text-decoration:underline;}
@@ -78,12 +80,14 @@
 <body>
 
 <div class="card">
-  <h1>BDS Admin Login</h1>
-  <p class="subtitle">Authorized access only</p>
+  <h1>2026 Jai Veer Tejaji Club</h1>
+  <p class="subtitle">Admin Login – Authorized Access Only</p>
 
   <input type="password" id="adminPass" placeholder="Enter Admin Password">
 
-  <label><input type="checkbox" onclick="togglePass()"> Show Password</label>
+  <label>
+    <input type="checkbox" onclick="togglePass()"> Show Password
+  </label>
 
   <button onclick="adminLogin()">Login</button>
 
@@ -93,7 +97,7 @@
 </div>
 
 <script>
-  const ADMIN_PASSWORD = "Ajeet@1993"; // ⛔ Yeh sirf local protection hai
+  const ADMIN_PASSWORD = "Ajeet@1993"; // ⛔ Local protection only
 
   function togglePass(){
     const inp = document.getElementById("adminPass");
@@ -105,12 +109,12 @@
     const msg  = document.getElementById("msg");
 
     if(pass === ADMIN_PASSWORD){
-      msg.style.color = "lightgreen";
+      msg.style.color = "#7CFC00";
       msg.textContent = "Login successful… redirecting";
       localStorage.setItem("bdsAdminLoggedIn", "yes");
       setTimeout(() => window.location.href = "dashboard.html", 600);
     } else {
-      msg.style.color = "red";
+      msg.style.color = "#ff8080";
       msg.textContent = "Wrong password!";
     }
   }
