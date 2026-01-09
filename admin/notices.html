@@ -1,0 +1,257 @@
+<!DOCTYPE html>  <html lang="en">  
+<head>  
+<meta charset="UTF-8">  
+<title>Notices | BDS Admin</title>  
+<meta name="viewport" content="width=device-width, initial-scale=1">  <style>  
+body{  
+  margin:0;  
+  font-family:Arial, sans-serif;  
+  background:#001532;  
+  color:#fff;  
+}  
+header{  
+  background:#000000dd;  
+  padding:10px;  
+  display:flex;  
+  justify-content:space-between;  
+  align-items:center;  
+}  
+header a, header button{  
+  background:#ffbf00;  
+  color:#000;  
+  padding:6px 10px;  
+  border:none;  
+  border-radius:6px;  
+  font-size:13px;  
+  cursor:pointer;  
+  text-decoration:none;  
+  font-weight:bold;  
+}  
+.container{  
+  max-width:900px;  
+  margin:14px auto;  
+  padding:10px;  
+}  
+h1{margin:0 0 10px;font-size:22px;}  
+label{font-size:13px;display:block;margin-top:8px;}  
+input[type="text"], textarea{  
+  width:100%;  
+  padding:6px;  
+  border-radius:6px;  
+  border:none;  
+  margin-top:3px;  
+  font-size:13px;  
+  box-sizing:border-box;  
+}  
+textarea{min-height:70px;}  
+button.primary{  
+  margin-top:10px;  
+  background:#ffbf00;  
+  color:#000;  
+  border:none;  
+  padding:7px 14px;  
+  border-radius:999px;  
+  font-weight:bold;  
+  cursor:pointer;  
+}  
+table{  
+  width:100%;  
+  border-collapse:collapse;  
+  margin-top:14px;  
+  font-size:13px;  
+}  
+th,td{  
+  border:1px solid #ffffff55;  
+  padding:6px;  
+}  
+th{  
+  background:#ffbf00;  
+  color:#000;  
+}  
+.badge{  
+  padding:2px 6px;  
+  border-radius:6px;  
+  font-size:11px;  
+}  
+.badge-on{background:lightgreen;color:#000;}  
+.badge-off{background:#ff5252;color:#fff;}  
+.small-btn{  
+  padding:3px 7px;  
+  border-radius:999px;  
+  border:none;  
+  font-size:11px;  
+  cursor:pointer;  
+}  
+</style>  <!-- Supabase JS v2 (browser UMD) -->  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>  </head>  
+<body>  <header>  
+  <a href="dashboard.html">⬅ Dashboard</a>  
+  <button onclick="logout()">Logout</button>  
+</header>  <div class="container">  
+  <h1>Manage Notices</h1>    <form id="noticeForm">  
+    <label>Notice Title  
+      <input type="text" id="nTitle" required>  
+    </label>  
+    <label>Notice Text  
+      <textarea id="nBody" required></textarea>  
+    </label>  
+    <button class="primary" type="submit">Add Notice</button>  
+  </form>    <table>  
+    <thead>  
+      <tr>  
+        <th>#</th>  
+        <th>Title</th>  
+        <th>Text</th>  
+        <th>Status</th>  
+        <th>Actions</th>  
+      </tr>  
+    </thead>  
+    <tbody id="noticesBody"></tbody>  
+  </table>  
+</div>  <script>  
+  // 🔐 Admin guard  
+  if (localStorage.getItem("bdsAdminLoggedIn") !== "yes") {  
+    window.location.href = "login.html";  
+  }  
+  function logout(){  
+    localStorage.removeItem("bdsAdminLoggedIn");  
+    window.location.href="login.html";  
+  }  
+  window.logout = logout;  
+  
+  // 🔗 Supabase config (tumhara project)  
+  const SUPABASE_URL = "https://yyymjhuwjvyykukfzqow.supabase.co";  
+  const SUPABASE_ANON_KEY =  
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl5eW1qaHV3anZ5eWt1a2Z6cW93Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ2NzMzMjIsImV4cCI6MjA4MDI0OTMyMn0.Ja9Do4cwumTnXx2NGIRW8Ti3rKm4MBiLClQz0xjOtrQ";  
+  
+  const { createClient } = supabase;  
+  const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);  
+  
+  const form  = document.getElementById("noticeForm");  
+  const tbody = document.getElementById("noticesBody");  
+  
+  // ➕ Add new notice  
+  form.addEventListener("submit", async (e)=>{  
+    e.preventDefault();  
+    const title = document.getElementById("nTitle").value.trim();  
+    const body  = document.getElementById("nBody").value.trim();  
+  
+    if(!title || !body){  
+      alert("Title aur notice text dono zaroori hain.");  
+      return;  
+    }  
+  
+    const { error } = await sb  
+      .from("notices")  
+      .insert([{  
+        title:  title,   // ✅ column name  
+        body:   body,    // ✅ column name  
+        active: true     // ✅ boolean column  
+        // created_at column me default now() laga hua hai (auto)  
+      }]);  
+  
+    if (error) {  
+      console.error(error);  
+      alert("Error adding notice: " + error.message);  
+      return;  
+    }  
+  
+    form.reset();  
+    loadNotices();  
+  });  
+  
+  // 📥 Load notices list  
+  async function loadNotices(){  
+    tbody.innerHTML = "<tr><td colspan='5'>Loading...</td></tr>";  
+  
+    const { data, error } = await sb  
+      .from("notices")  
+      .select("*")  
+      .order("created_at", { ascending:false });  
+  
+    if (error) {  
+      console.error(error);  
+      tbody.innerHTML =  
+        "<tr><td colspan='5'>Error loading notices: "+error.message+"</td></tr>";  
+      return;  
+    }  
+  
+    if (!data || data.length === 0) {  
+      tbody.innerHTML = "<tr><td colspan='5'>No notices found.</td></tr>";  
+      return;  
+    }  
+  
+    let i=1, html="";  
+    data.forEach(row=>{  
+      const active = row.active !== false;  
+      let createdText = "";  
+      if (row.created_at) {  
+        const dt = new Date(row.created_at);  
+        if (!isNaN(dt.getTime())) {  
+          createdText = dt.toLocaleString();  
+        }  
+      }  
+  
+      html += `  
+        <tr>  
+          <td>${i++}</td>  
+          <td>${row.title || ""}</td>  
+          <td>${row.body || ""}</td>  
+          <td>  
+            <span class="badge ${active ? "badge-on" : "badge-off"}">  
+              ${active ? "Visible" : "Hidden"}  
+            </span><br>  
+            <span style="font-size:11px;opacity:.8;">${createdText}</span>  
+          </td>  
+          <td>  
+            <button class="small-btn"  
+              onclick="toggleNotice(${row.id},${active})">  
+              ${active ? "Hide" : "Show"}  
+            </button>  
+            <button class="small-btn" style="background:#ff5252;color:#fff;"  
+              onclick="deleteNotice(${row.id})">  
+              Delete  
+            </button>  
+          </td>  
+        </tr>`;  
+    });  
+    tbody.innerHTML = html;  
+  }  
+  
+  // 👁 Hide / Show  
+  async function toggleNotice(id,current){  
+    const { error } = await sb  
+      .from("notices")  
+      .update({ active: !current })  
+      .eq("id", id);  
+  
+    if (error) {  
+      console.error(error);  
+      alert("Error updating notice: " + error.message);  
+      return;  
+    }  
+    loadNotices();  
+  }  
+  window.toggleNotice = toggleNotice;  
+  
+  // 🗑 Delete  
+  async function deleteNotice(id){  
+    if (!confirm("Delete this notice?")) return;  
+  
+    const { error } = await sb  
+      .from("notices")  
+      .delete()  
+      .eq("id", id);  
+  
+    if (error) {  
+      console.error(error);  
+      alert("Error deleting notice: " + error.message);  
+      return;  
+    }  
+    loadNotices();  
+  }  
+  window.deleteNotice = deleteNotice;  
+  
+  // First load  
+  loadNotices();  
+</script>  </body>  
+</html>

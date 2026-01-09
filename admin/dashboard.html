@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>BDS Admin Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    body{
+      margin:0;
+      font-family:Arial, sans-serif;
+      background:#001532;
+      color:#fff;
+    }
+    header{
+      background:#000000dd;
+      padding:10px 14px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+    .logo{
+      font-size:16px;
+      font-weight:bold;
+      color:#ffca28;
+    }
+    nav a{
+      color:#fff;
+      text-decoration:none;
+      margin-left:10px;
+      font-size:13px;
+      font-weight:bold;
+    }
+    nav a:hover{text-decoration:underline;}
+    nav button{
+      border:none;
+      background:red;
+      color:#fff;
+      padding:5px 12px;
+      border-radius:999px;
+      font-size:12px;
+      cursor:pointer;
+      margin-left:8px;
+    }
+
+    .container{
+      max-width:900px;
+      margin:18px auto;
+      padding:10px;
+    }
+    h1{
+      margin-top:0;
+      font-size:22px;
+    }
+    .info{
+      font-size:12px;
+      color:#cccccc;
+      margin-top:4px;
+    }
+    .grid{
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+      margin-top:12px;
+    }
+    .card{
+      flex:1 1 220px;
+      background:rgba(0,0,0,0.7);
+      border-radius:12px;
+      padding:12px;
+      box-shadow:0 0 10px #000;
+    }
+    .card h2{
+      margin:0 0 6px;
+      font-size:16px;
+      color:#ffca28;
+    }
+    .card p{
+      margin:0 0 10px;
+      font-size:13px;
+      color:#dddddd;
+    }
+    .card a.btn{
+      display:inline-block;
+      padding:6px 12px;
+      border-radius:999px;
+      background:#ffbf00;
+      color:#000;
+      font-weight:bold;
+      font-size:13px;
+      text-decoration:none;
+    }
+    .card a.btn:hover{
+      filter:brightness(1.05);
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">BDS Admin Dashboard</div>
+  <nav>
+    <a href="../index.html" target="_blank">🏠 Website</a>
+    <button onclick="logout()">Logout</button>
+  </nav>
+</header>
+
+<div class="container">
+  <h1>Welcome, Admin</h1>
+  <p class="info">
+    Yeh private area hai. Sirf authorized admin hi yahan aa sakta hai.
+    Yahan se aap students, notices, gallery, answer key aur home poster manage kar sakte hain.
+  </p>
+
+  <div class="grid">
+    <!-- Students -->
+    <div class="card">
+      <h2>👨‍🎓 Students & Payments</h2>
+      <p>Students ka data, roll number, payment status, verification, etc. manage karne ke liye.</p>
+      <a href="students.html" class="btn">Open Students Panel</a>
+    </div>
+
+    <!-- Notices -->
+    <div class="card">
+      <h2>📢 Notices</h2>
+      <p>Home page par dikhne wale important notices yahan se update honge.</p>
+      <a href="notices.html" class="btn">Manage Notices</a>
+    </div>
+
+    <!-- Gallery -->
+    <div class="card">
+      <h2>🖼 Gallery</h2>
+      <p>Exam / event ki photos yahan se upload hongi aur website par gallery me dikhengi.</p>
+      <a href="gallery.html" class="btn">Manage Gallery</a>
+    </div>
+
+    <!-- Answer Keys -->
+    <div class="card">
+      <h2>📥 Answer Keys</h2>
+      <p>Exam ke baad answer key (PDF) upload karke students ke liye download ke liye available kar sakte hain.</p>
+      <a href="answerkeys.html" class="btn">Upload Answer Keys</a>
+    </div>
+
+    <!-- Home Poster -->
+    <div class="card">
+      <h2>🎟 Home Flex / Poster</h2>
+      <p>Website ke home page par jo main poster (flex) dikh raha hai, use yahan se change karenge.</p>
+      <a href="poster.html" class="btn">Change Home Poster</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Guard: bina login ke dashboard allow nahi
+  (function(){
+    var ok = localStorage.getItem("bdsAdminLoggedIn");
+    if(ok !== "yes"){
+      window.location.href = "login.html";
+    }
+  })();
+
+  function logout(){
+    localStorage.removeItem("bdsAdminLoggedIn");
+    window.location.href = "login.html";
+  }
+</script>
+
+</body>
+</html>

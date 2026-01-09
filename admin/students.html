@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Admin – Student Applications</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+body{font-family:Arial;background:#f4f4f4;margin:0}
+.container{max-width:1200px;margin:15px auto;background:#fff;padding:15px;border-radius:8px}
+h1{color:#b20c0c;margin-bottom:10px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{border:1px solid #ddd;padding:6px;text-align:left}
+th{background:#eee}
+button{padding:5px 8px;border:none;border-radius:4px;cursor:pointer;font-size:12px}
+.view{background:#1976d2;color:#fff}
+.del{background:#c62828;color:#fff}
+.edit{background:#6a1b9a;color:#fff}
+.approve{background:#2e7d32;color:#fff}
+.pending{background:#ffa000}
+.reject{background:#c62828;color:#fff}
+.section{margin-top:12px;border-top:1px solid #ccc;padding-top:8px}
+label{font-size:13px}
+input{width:100%;padding:5px;margin-top:2px}
+.msg{font-size:13px;margin-top:6px}
+a{color:#1976d2}
+</style>
+
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+</head>
+
+<body>
+<div class="container">
+
+<a href="dashboard.html">← Admin Home</a>
+<h1>Student Applications</h1>
+
+<button onclick="downloadExcel()">⬇ Download Excel</button>
+<p id="listMsg">Loading...</p>
+
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Roll</th>
+<th>Name</th>
+<th>Mobile</th>
+<th>Exam Level</th>
+<th>Form</th>
+<th>Payment</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody id="tbody"></tbody>
+</table>
+
+<!-- DETAIL BOX -->
+<div id="detailBox" style="display:none">
+
+<div class="section">
+<b>Name:</b> <span id="dName"></span><br>
+<b>Father:</b> <span id="dFather"></span><br>
+<b>Mobile:</b> <span id="dMobile"></span><br>
+<b>Roll:</b> <span id="dRoll"></span><br>
+<b>Exam Level:</b> <span id="dLevel"></span><br>
+<b>Form Status:</b> <span id="dStatus"></span><br>
+<b>Payment:</b> <span id="dPayment"></span>
+</div>
+
+<div class="section">
+<b>Documents</b><br>
+Photo: <a id="dPhoto" target="_blank">Not uploaded</a><br>
+Aadhaar Front: <a id="dAF" target="_blank">Not uploaded</a><br>
+Aadhaar Back: <a id="dAB" target="_blank">Not uploaded</a><br>
+Marksheet: <a id="dMS" target="_blank">Not uploaded</a><br>
+Payment Screenshot: <a id="dPSS" target="_blank">Not uploaded</a>
+</div>
+
+<div class="section">
+<button class="approve" onclick="setStatus('approved',true)">Approve</button>
+<button class="pending" onclick="setStatus('pending',false)">Pending</button>
+<button class="reject" onclick="setStatus('rejected',false)">Reject</button>
+</div>
+
+<div class="section">
+<b>Admit Card</b>
+<label>Centre</label><input id="cCentre">
+<label>Date</label><input id="cDate">
+<label>Shift</label><input id="cShift">
+<label>Start Time</label><input id="cStart">
+<label>End Time</label><input id="cEnd">
+<label><input type="checkbox" id="cAllow"> Admit Allowed</label>
+<button class="approve" onclick="saveAdmit()">Save Admit</button>
+</div>
+
+<div class="section">
+<b>Result</b>
+<label>Marks</label><input id="rMarks">
+<label>Rank</label><input id="rRank">
+<label>Status</label><input id="rStatus">
+<label><input type="checkbox" id="rPub"> Publish</label>
+<button class="approve" onclick="saveResult()">Save Result</button>
+</div>
+
+<p class="msg" id="dMsg"></p>
+</div>
+
+</div>
+
+<script>
+const sb = supabase.createClient(
+ "https://yyymjhuwjvyykukfzqow.supabase.co",
+ "sb_publishable_AotK9XHnYF0UmfJYrS7GCg_BHXVvzy0"
+);
+
+let currentId = null;
+
+/* PUBLIC URL FROM STORAGE */
+function pub(path){
+ if(!path) return null;
+ const { data } = sb.storage.from("student_docs").getPublicUrl(path);
+ return data?.publicUrl || null;
+}
+
+/* LOAD TABLE */
+async function load(){
+ const { data, error } = await sb
+  .from("students")
+  .select("*")
+  .order("created_at",{ascending:false});
+
+ if(error){ listMsg.innerText=error.message; return; }
+
+ tbody.innerHTML="";
+ let i=1;
+
+ data.forEach(s=>{
+  const name = s.full_name || "";
+
+  const tr=document.createElement("tr");
+  tr.innerHTML=`
+   <td>${i++}</td>
+   <td>${s.roll_number||""}</td>
+   <td>${name}</td>
+   <td>${s.mobile||""}</td>
+   <td>${s.exam_level||""}</td>
+   <td>${s.form_status||"pending"}</td>
+   <td>${s.payment_status||"pending"}</td>
+   <td>
+    <button class="view">View</button>
+    <button class="edit">Edit Name</button>
+    <button class="del">Delete</button>
+   </td>`;
+
+  tr.querySelector(".view").onclick=()=>openDetail(s);
+  tr.querySelector(".edit").onclick=()=>editName(s.id, name);
+  tr.querySelector(".del").onclick=()=>delRow(s.id);
+  tbody.appendChild(tr);
+ });
+
+ listMsg.innerText="Loaded";
+}
+load();
+
+/* EDIT NAME */
+async function editName(id, oldName){
+ const newName = prompt("Enter correct full name", oldName || "");
+ if(!newName) return;
+
+ const { error } = await sb
+  .from("students")
+  .update({ full_name: newName })
+  .eq("id", id);
+
+ if(error){
+  alert(error.message);
+  return;
+ }
+
+ alert("Name updated");
+ load();
+}
+
+/* DOCUMENT LINK */
+function setLink(el,path){
+ const url = pub(path);
+ if(url){
+  el.href=url;
+  el.textContent="Open";
+ }else{
+  el.removeAttribute("href");
+  el.textContent="Not uploaded";
+ }
+}
+
+/* OPEN DETAIL */
+function openDetail(s){
+ currentId = s.id;
+ detailBox.style.display="block";
+
+ dName.innerText   = s.full_name || "";
+ dFather.innerText = s.father_name || "";
+ dMobile.innerText = s.mobile || "";
+ dRoll.innerText   = s.roll_number || "";
+ dLevel.innerText  = s.exam_level || "";
+ dStatus.innerText = s.form_status || "";
+ dPayment.innerText= s.payment_status || "";
+
+ setLink(dPhoto,s.photo_path);
+ setLink(dAF,s.aadhar_front_path);
+ setLink(dAB,s.aadhar_back_path);
+ setLink(dMS,s.marksheet_path);
+ setLink(dPSS,s.payment_screenshot_path);
+}
+
+/* STATUS UPDATE */
+async function setStatus(status,pay){
+ if(!currentId) return alert("Click VIEW first");
+
+ await sb.from("students").update({
+  form_status:status,
+  payment_status: pay ? "approved" : "pending"
+ }).eq("id",currentId);
+
+ alert("Status updated");
+ load();
+}
+
+/* ADMIT */
+async function saveAdmit(){
+ await sb.from("students").update({
+  exam_center:cCentre.value,
+  exam_date:cDate.value,
+  exam_shift:cShift.value,
+  exam_start_time:cStart.value,
+  exam_end_time:cEnd.value,
+  admit_allowed:cAllow.checked
+ }).eq("id",currentId);
+
+ dMsg.innerText="Admit saved";
+}
+
+/* RESULT */
+async function saveResult(){
+ await sb.from("students").update({
+  marks:rMarks.value||null,
+  rank:rRank.value||null,
+  result_status:rStatus.value||null,
+  result_published:rPub.checked
+ }).eq("id",currentId);
+
+ dMsg.innerText="Result saved";
+}
+
+/* DELETE */
+async function delRow(id){
+ if(!confirm("Delete permanently?")) return;
+ await sb.from("students").delete().eq("id",id);
+ load();
+}
+
+/* EXCEL */
+async function downloadExcel(){
+ const {data}=await sb.from("students")
+  .select("full_name,roll_number,mobile,exam_level");
+
+ const rows=data.map(s=>({
+  Name: s.full_name || "",
+  Roll: s.roll_number,
+  Mobile: s.mobile,
+  ExamLevel: s.exam_level
+ }));
+
+ const ws=XLSX.utils.json_to_sheet(rows);
+ const wb=XLSX.utils.book_new();
+ XLSX.utils.book_append_sheet(wb,ws,"Students");
+ XLSX.writeFile(wb,"students.xlsx");
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin – Gallery Upload | BDS Exam Portal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    body { font-family: Arial, sans-serif; background:#f5f5f5; margin:0; }
+    .container {
+      max-width: 800px;
+      margin: 20px auto;
+      background:#fff;
+      padding: 15px;
+      border-radius:8px;
+      box-shadow:0 2px 8px rgba(0,0,0,0.2);
+    }
+    h1 { margin-top:0; color:#b20c0c; }
+    label { display:block; margin-top:8px; font-size:14px; }
+    input[type="text"] {
+      width:100%; padding:7px; box-sizing:border-box;
+      border-radius:4px; border:1px solid #ccc; margin-top:3px;
+    }
+    input[type="file"] { margin-top:5px; }
+    button {
+      margin-top:12px; padding:8px 14px;
+      border:none; border-radius:4px;
+      background:#1976d2; color:#fff;
+      cursor:pointer; font-size:14px;
+    }
+    button:disabled { opacity:0.6; cursor:not-allowed; }
+    .msg { margin-top:8px; font-size:13px; }
+    .preview-list { margin-top:15px; display:flex; flex-wrap:wrap; gap:10px; }
+    .preview-item {
+      width:140px; text-align:center; font-size:12px;
+      border:1px solid #ddd;
+      border-radius:6px;
+      padding:6px;
+      background:#fafafa;
+    }
+    .preview-item img {
+      width:110px; height:110px; object-fit:cover;
+      border-radius:6px; border:1px solid #ccc;
+    }
+    .topbar-links a { margin-right:8px; font-size:13px; text-decoration:none; color:#1976d2; }
+
+    .btn-small {
+      margin-top:6px;
+      padding:4px 8px;
+      font-size:11px;
+      border-radius:4px;
+    }
+    .btn-delete {
+      background:#d32f2f;
+    }
+  </style>
+
+  <!-- Supabase JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.48.0/dist/umd/supabase.min.js"></script>
+</head>
+<body>
+
+<div class="container">
+  <div class="topbar-links">
+    <a href="dashboard.html">← Admin Home</a>
+    <span>|</span>
+    <a href="../gallery.html" target="_blank">View Gallery Page</a>
+  </div>
+
+  <h1>Gallery Photo Upload</h1>
+  <p style="font-size:13px;">
+    Yahan se jo photo upload karoge, woh <b>gallery.html</b> page par dikhengi.<br>
+    Supabase me <code>gallery_items</code> table aur <code>gallery</code> bucket use ho raha hai.
+  </p>
+
+  <label>Select Image File</label>
+  <input type="file" id="photoFile" accept="image/*">
+
+  <label>Caption (optional)</label>
+  <input type="text" id="captionInput" placeholder="Jaise: Exam hall, Prize distribution...">
+
+  <label style="margin-top:10px;">
+    <input type="checkbox" id="visibleCheck" checked>
+    Visible in Gallery
+  </label>
+
+  <button id="uploadBtn">Upload to Gallery</button>
+  <p class="msg" id="msgBox"></p>
+
+  <h3 style="margin-top:20px;">Latest Uploaded Photos</h3>
+  <div id="previewList" class="preview-list"></div>
+</div>
+
+<script>
+  // 🔐 Admin login check
+  if (localStorage.getItem("bdsAdminLoggedIn") !== "yes") {
+    window.location.href = "login.html";
+  }
+
+  // Supabase config
+  const SUPABASE_URL = "https://yyymjhuwjvyykukfzqow.supabase.co";
+  const SUPABASE_ANON_KEY =
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl5eW1qaHV3anZ5eWt1a2Z6cW93Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ2NzMzMjIsImV4cCI6MjA4MDI0OTMyMn0.Ja9Do4cwumTnXx2NGIRW8Ti3rKm4MBiLClQz0xjOtrQ";
+
+  const BUCKET_NAME = "gallery";
+  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  const photoFileInput = document.getElementById("photoFile");
+  const captionInput   = document.getElementById("captionInput");
+  const visibleCheck   = document.getElementById("visibleCheck");
+  const uploadBtn      = document.getElementById("uploadBtn");
+  const msgBox         = document.getElementById("msgBox");
+  const previewList    = document.getElementById("previewList");
+
+  // ================== UPLOAD ==================
+  uploadBtn.addEventListener("click", async () => {
+    const file = photoFileInput.files[0];
+    const caption = captionInput.value.trim();
+    const visible = visibleCheck.checked;
+
+    if (!file) {
+      msgBox.style.color = "red";
+      msgBox.textContent = "Please select an image file.";
+      return;
+    }
+
+    msgBox.style.color = "#000";
+    msgBox.textContent = "Uploading photo, please wait...";
+    uploadBtn.disabled = true;
+
+    try {
+      // Upload file to storage
+      const filePath = `gallery/${Date.now()}_${file.name}`;
+
+      const { error: uploadError } = await supabase
+        .storage
+        .from(BUCKET_NAME)
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      // Get public URL
+      const { data: pub } = supabase.storage
+        .from(BUCKET_NAME)
+        .getPublicUrl(filePath);
+
+      const publicUrl = pub.publicUrl;
+
+      // Insert row into DB
+      const { error: insertError } = await supabase
+        .from("gallery_items")
+        .insert({
+          caption: caption || null,
+          file_path: filePath,
+          public_url: publicUrl,
+          visible: visible,
+          created_at: new Date().toISOString()
+        });
+
+      if (insertError) throw insertError;
+
+      msgBox.style.color = "green";
+      msgBox.textContent = "Photo uploaded successfully!";
+
+      photoFileInput.value = "";
+      captionInput.value = "";
+      visibleCheck.checked = true;
+
+      loadLatestPhotos();
+
+    } catch (err) {
+      msgBox.style.color = "red";
+      msgBox.textContent = "Error: " + err.message;
+    } finally {
+      uploadBtn.disabled = false;
+    }
+  });
+
+  // ================== LOAD & SHOW PHOTOS ==================
+  async function loadLatestPhotos() {
+    previewList.innerHTML = "Loading...";
+
+    const { data, error } = await supabase
+      .from("gallery_items")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(12);
+
+    if (error) {
+      previewList.textContent = "Error loading preview: " + error.message;
+      return;
+    }
+
+    previewList.innerHTML = "";
+    data.forEach(row => {
+      const div = document.createElement("div");
+      div.className = "preview-item";
+      div.innerHTML = `
+        <img src="${row.public_url}" alt="img">
+        <div>${row.caption || ""}</div>
+        <div style="font-size:11px; color:${row.visible ? "green" : "red"};">
+          ${row.visible ? "Visible" : "Hidden"}
+        </div>
+        <button class="btn-small btn-delete" data-id="${row.id}" data-path="${row.file_path}">
+          Delete
+        </button>
+      `;
+      previewList.appendChild(div);
+    });
+
+    // har delete button par click listener
+    document.querySelectorAll(".btn-delete").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const id   = btn.getAttribute("data-id");
+        const path = btn.getAttribute("data-path");
+        deletePhoto(id, path);
+      });
+    });
+  }
+
+  // ================== DELETE PHOTO ==================
+  async function deletePhoto(id, filePath) {
+    const ok = confirm("Ye photo gallery se permanently delete ho jayegi. Continue?");
+    if (!ok) return;
+
+    msgBox.style.color = "#000";
+    msgBox.textContent = "Deleting photo...";
+
+    try {
+      // 1) Storage se file delete
+      const { error: storageErr } = await supabase
+        .storage
+        .from(BUCKET_NAME)
+        .remove([filePath]);
+
+      if (storageErr) throw storageErr;
+
+      // 2) Table se row delete
+      const { error: dbErr } = await supabase
+        .from("gallery_items")
+        .delete()
+        .eq("id", id);
+
+      if (dbErr) throw dbErr;
+
+      msgBox.style.color = "green";
+      msgBox.textContent = "Photo deleted successfully.";
+
+      loadLatestPhotos();
+    } catch (err) {
+      msgBox.style.color = "red";
+      msgBox.textContent = "Error deleting photo: " + err.message;
+    }
+  }
+
+  // Initial load
+  loadLatestPhotos();
+</script>
+
+</body>
+</html>

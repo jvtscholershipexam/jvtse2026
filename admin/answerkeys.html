@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin - Answer Keys</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{
+      font-family:Arial, sans-serif;
+      background:radial-gradient(circle at top,#1a4fff 0%,#000b33 55%,#000316 100%);
+      color:#fff;
+    }
+    header{
+      background:rgba(0,0,0,.8);
+      padding:8px 14px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      flex-wrap:wrap;
+      border-bottom:2px solid #ffbf00;
+    }
+    .logo-text{font-size:18px;font-weight:bold;}
+    a.back{
+      color:#ffbf00;
+      text-decoration:none;
+      font-size:13px;
+    }
+
+    .container{max-width:1000px;margin:18px auto;padding:0 10px;}
+    .card{
+      background:rgba(0,0,0,.7);
+      padding:14px;
+      border-radius:10px;
+      margin-bottom:16px;
+      border:1px solid rgba(255,255,255,.2);
+    }
+    h1{font-size:22px;margin-bottom:6px;}
+    h2{font-size:18px;margin:10px 0 6px;color:#ffd84d;}
+
+    label{display:block;font-size:14px;margin-top:6px;}
+    input{
+      width:100%;
+      padding:7px;
+      border-radius:6px;
+      border:none;
+      margin-top:3px;
+      font-size:14px;
+    }
+
+    .btn-primary{
+      margin-top:10px;
+      padding:9px 20px;
+      border-radius:999px;
+      border:none;
+      background:#ffbf00;
+      color:#000;
+      font-weight:bold;
+      cursor:pointer;
+      font-size:14px;
+    }
+    .btn-small{
+      padding:4px 10px;
+      border-radius:14px;
+      border:none;
+      cursor:pointer;
+      font-size:11px;
+      font-weight:bold;
+    }
+    .btn-visible{background:#22c55e;color:#000;}
+    .btn-hide{background:#facc15;color:#000;}
+    .btn-delete{background:#ef4444;color:#fff;}
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+      margin-top:8px;
+      font-size:13px;
+    }
+    th,td{
+      padding:6px 8px;
+      border-bottom:1px solid rgba(255,255,255,.2);
+    }
+    th{background:rgba(0,0,0,.5);text-align:left;}
+
+    #msgBox{margin-top:6px;font-size:13px;}
+  </style>
+
+  <!-- Supabase JS v2 (CDN) -->
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+<header>
+  <div class="logo-text">Admin &mdash; Answer Keys</div>
+  <a class="back" href="dashboard.html">&larr; Back to Dashboard</a>
+</header>
+
+<div class="container">
+
+  <!-- ADD NEW ANSWER KEY -->
+  <div class="card">
+    <h1>Upload / Add Answer Key</h1>
+    <p style="font-size:13px;color:#ffeaa7;">
+      Aap yahaan ya to <b>direct PDF URL</b> daal sakte hain, ya phir
+      <b>PDF file upload</b> kar sakte hain. <br>
+      Students <b>Download</b> page se in answer keys ko dekh sakenge.
+    </p>
+
+    <label>Exam / Paper Title</label>
+    <input type="text" id="akTitle" placeholder="e.g. Scholarship Exam 2026 - Answer Key">
+
+    <label>Exam Date</label>
+    <!-- table me exam_date = date type hai, isliye date input -->
+    <input type="date" id="akDate">
+
+    <label>PDF URL (https://...) – optional</label>
+    <input type="text" id="akUrl" placeholder="Agar file upload nahi karni ho to direct link yahan daalein">
+
+    <label>PDF File (optional)</label>
+    <input type="file" id="akFile" accept="application/pdf">
+
+    <button class="btn-primary" onclick="saveAnswerKey()">Save Answer Key</button>
+    <div id="msgBox"></div>
+  </div>
+
+  <!-- CURRENT ANSWER KEYS -->
+  <div class="card">
+    <h2>Current Answer Keys</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Title</th>
+          <th>Exam Date</th>
+          <th>Status</th>
+          <th>Link</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="akTableBody">
+        <tr><td colspan="6" style="text-align:center;">Loading...</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<script>
+  // 🔐 Simple admin guard (same key jo baaki admin files me use ho rahi hai)
+  if (localStorage.getItem("bdsAdminLoggedIn") !== "yes") {
+    window.location.href = "login.html";
+  }
+
+  // 🔗 Supabase config
+  const SUPABASE_URL = "https://yyymjhuwjvyykukfzqow.supabase.co";
+  const SUPABASE_ANON_KEY =
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl5eW1qaHV3anZ5eWt1a2Z6cW93Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ2NzMzMjIsImV4cCI6MjA4MDI0OTMyMn0.Ja9Do4cwumTnXx2NGIRW8Ti3rKm4MBiLClQz0xjOtrQ";
+
+  const { createClient } = supabase;
+  const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  function showMsg(text, color){
+    const m = document.getElementById("msgBox");
+    m.style.color = color || "#fff";
+    m.innerHTML = text;
+  }
+
+  // 🔹 SAVE / UPLOAD ANSWER KEY
+  async function saveAnswerKey(){
+    const title = document.getElementById("akTitle").value.trim();
+    const date  = document.getElementById("akDate").value.trim();   // YYYY-MM-DD aayega
+    const urlIn = document.getElementById("akUrl").value.trim();
+    const file  = document.getElementById("akFile").files[0];
+
+    if(!title){
+      alert("Title zaroori hai.");
+      return;
+    }
+
+    if(!urlIn && !file){
+      alert("Ya to PDF URL daalo, ya PDF file upload karo.");
+      return;
+    }
+
+    showMsg("Saving, please wait...");
+
+    let finalUrl  = urlIn || "";
+    let filePath  = null;
+
+    try {
+      // Agar file selected hai to Supabase storage par upload karo
+      if (file) {
+        // BUCKET NAME EXACT: exam_files
+        filePath = "answer_keys/" + Date.now() + "_" + file.name;
+
+        const { data: uploadData, error: uploadErr } = await sb
+          .storage
+          .from("exam_files")
+          .upload(filePath, file);
+
+        if (uploadErr) {
+          console.error(uploadErr);
+          showMsg("File upload error: " + uploadErr.message, "#ff8080");
+          return;
+        }
+
+        // Public URL nikaal lo
+        const { data: pub } = sb
+          .storage
+          .from("exam_files")
+          .getPublicUrl(filePath);
+
+        if (pub && pub.publicUrl) {
+          finalUrl = pub.publicUrl;
+        }
+      }
+
+      // Ab table me row insert karo
+      const { error: insertErr } = await sb
+        .from("answer_keys")
+        .insert([{
+          exam_name:  title,          // ✅ column name
+          exam_date:  date || null,   // ✅ date type
+          public_url: finalUrl || null,
+          file_path:  filePath,
+          visible:    true            // ✅ boolean column
+        }]);
+
+      if (insertErr) {
+        console.error(insertErr);
+        showMsg("Error: " + insertErr.message, "#ff8080");
+        return;
+      }
+
+      showMsg("Answer key saved successfully!","#22c55e");
+      document.getElementById("akTitle").value = "";
+      document.getElementById("akDate").value  = "";
+      document.getElementById("akUrl").value   = "";
+      document.getElementById("akFile").value  = "";
+      loadAnswerKeys();
+
+    } catch (err) {
+      console.error(err);
+      showMsg("Error: " + err.message, "#ff8080");
+    }
+  }
+
+  // 🔹 VISIBILITY TOGGLE
+  async function setVisibility(id,currentVisible){
+    try {
+      const { error } = await sb
+        .from("answer_keys")
+        .update({ visible: !currentVisible })
+        .eq("id", id);
+
+      if (error) {
+        console.error(error);
+        alert("Visibility change error: " + error.message);
+        return;
+      }
+      loadAnswerKeys();
+    } catch (err) {
+      console.error(err);
+      alert("Visibility change error: " + err.message);
+    }
+  }
+
+  // 🔹 DELETE ANSWER KEY
+  async function deleteKey(id){
+    if(!confirm("Sure? Is answer key ko delete karna hai?")) return;
+
+    try {
+      const { error } = await sb
+        .from("answer_keys")
+        .delete()
+        .eq("id", id);
+
+      if (error) {
+        console.error(error);
+        alert("Delete error: " + error.message);
+        return;
+      }
+      loadAnswerKeys();
+    } catch (err) {
+      console.error(err);
+      alert("Delete error: " + err.message);
+    }
+  }
+
+  // 🔹 LOAD LIST
+  async function loadAnswerKeys(){
+    const body = document.getElementById("akTableBody");
+    body.innerHTML =
+      '<tr><td colspan="6" style="text-align:center;">Loading...</td></tr>';
+
+    try {
+      const { data, error } = await sb
+        .from("answer_keys")
+        .select("*")
+        .order("id", { ascending: false });
+
+      if (error) {
+        console.error(error);
+        body.innerHTML =
+          '<tr><td colspan="6" style="text-align:center;color:#ff8080;">Error: '+
+          error.message +'</td></tr>';
+        return;
+      }
+
+      if (!data || data.length === 0) {
+        body.innerHTML =
+          '<tr><td colspan="6" style="text-align:center;">No answer keys added yet.</td></tr>';
+        return;
+      }
+
+      body.innerHTML = "";
+      let i = 1;
+      data.forEach(row => {
+        const tr = document.createElement("tr");
+
+        // Final URL decide karo
+        let url = row.public_url || "";
+        if (!url && row.file_path) {
+          const { data: pub } = sb
+            .storage
+            .from("exam_files")
+            .getPublicUrl(row.file_path);
+          if (pub && pub.publicUrl) {
+            url = pub.publicUrl;
+          }
+        }
+
+        const visible = row.visible !== false;
+
+        tr.innerHTML =
+          "<td>"+(i++)+"</td>"+
+          "<td>"+(row.exam_name || "-")+"</td>"+
+          "<td>"+(row.exam_date || "-")+"</td>"+
+          "<td>"+(visible ? "Visible" : "Hidden")+"</td>"+
+          "<td>"+(
+            url
+              ? '<a href="'+url+'" target="_blank" style="color:#ffbf00;">Open</a>'
+              : '-'
+          )+"</td>"+
+          "<td>"+
+            '<button class="btn-small '+(visible?'btn-hide':'btn-visible')+'" '+
+              'onclick="setVisibility('+row.id+','+visible+')">'+
+                (visible ? 'Hide' : 'Make Visible')+
+            '</button> '+
+            '<button class="btn-small btn-delete" onclick="deleteKey('+row.id+')">Delete</button>'+
+          "</td>";
+
+        body.appendChild(tr);
+      });
+
+    } catch (err) {
+      console.error(err);
+      body.innerHTML =
+        '<tr><td colspan="6" style="text-align:center;color:#ff8080;">Error: '+
+        err.message +'</td></tr>';
+    }
+  }
+
+  loadAnswerKeys();
+</script>
+
+</body>
+</html>
