@@ -2,28 +2,33 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Download | BDS Mega Talent Hub</title>
+  <title>Download | 2026 Jai Veer Tejaji Club</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <style>
     *{box-sizing:border-box;margin:0;padding:0;}
     body{
       font-family:Arial, sans-serif;
-      background:radial-gradient(circle at top,#1a4fff 0%,#000b33 55%,#000316 100%);
+      background:radial-gradient(circle at top,#0b4d2b 0%,#032015 55%,#02140d 100%);
       color:#fff;
     }
     header{
-      background:rgba(0,0,0,.7);
+      background:rgba(0,0,0,.75);
       padding:8px 14px;
       display:flex;
       align-items:center;
       justify-content:space-between;
       flex-wrap:wrap;
-      border-bottom:2px solid #ffbf00;
+      border-bottom:2px solid #d4af37;
     }
-    .logo-text{font-size:18px;font-weight:bold;letter-spacing:1px;}
+    .logo-text{
+      font-size:18px;
+      font-weight:bold;
+      letter-spacing:1px;
+      color:#ffd65a;
+    }
     nav a{
-      color:#fff;
+      color:#ffeb99;
       text-decoration:none;
       margin-left:10px;
       font-size:13px;
@@ -37,8 +42,9 @@
       padding:14px;
       border-radius:10px;
       margin-bottom:15px;
+      border:1px solid rgba(212,175,55,0.6);
     }
-    h1{font-size:22px;margin-bottom:6px;}
+    h1{font-size:22px;margin-bottom:6px;color:#ffd65a;}
     h2{font-size:18px;margin:10px 0 6px;color:#ffd84d;}
 
     table{
@@ -51,18 +57,22 @@
       padding:6px 8px;
       border-bottom:1px solid rgba(255,255,255,.15);
     }
-    th{text-align:left;background:rgba(0,0,0,.3);}
+    th{
+      text-align:left;
+      background:rgba(0,0,0,.35);
+      color:#ffe08a;
+    }
     a.btn-download{
       display:inline-block;
-      padding:5px 10px;
+      padding:5px 12px;
       border-radius:16px;
-      background:#ffbf00;
+      background:#d4af37;
       color:#000;
       font-size:12px;
       font-weight:bold;
       text-decoration:none;
     }
-    a.btn-download:hover{background:#ffe066;}
+    a.btn-download:hover{background:#ffe08a;}
 
     #msgBox{margin-top:6px;font-size:13px;}
 
@@ -72,6 +82,7 @@
       padding:10px;
       background:rgba(0,0,0,.9);
       margin-top:15px;
+      color:#ddd;
     }
   </style>
 
@@ -80,7 +91,7 @@
 <body>
 
 <header>
-  <div class="logo-text">BABA DEEP SINGH MEGA TALENT HUB</div>
+  <div class="logo-text">2026 JAI VEER TEJAJI CLUB</div>
   <nav>
     <a href="index.html">HOME</a>
     <a href="apply.html">APPLY</a>
@@ -116,12 +127,12 @@
   </div>
 </div>
 
-<footer>© 2026 Baba Deep Singh Mega Talent Hub</footer>
+<footer>© 2026 Jai Veer Tejaji Club</footer>
 
 <script>
-  const SUPABASE_URL = "https://yyymjhuwjvyykukfzqow.supabase.co";
-  const SUPABASE_KEY =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl5eW1qaHV3anZ5eWt1a2Z6cW93Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ2NzMzMjIsImV4cCI6MjA4MDI0OTMyMn0.Ja9Do4cwumTnXx2NGIRW8Ti3rKm4MBiLClQz0xjOtrQ";
+  /* 🔗 Supabase Init (NEW) */
+  const SUPABASE_URL = "https://iqcbgiwycbuyvxpegmfg.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_BCvr1Fx0v1JgAWVE90ittw_bThpVl8C";
 
   const { createClient } = supabase;
   const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -148,7 +159,7 @@
     let i=1;
 
     data.forEach(row=>{
-      if(row.active===false) return; // hide inactive
+      if(row.active===false) return;
 
       const tr=document.createElement("tr");
       tr.innerHTML = `
