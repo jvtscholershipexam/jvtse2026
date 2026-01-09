@@ -2,63 +2,76 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Exam & Event Gallery</title>
+  <title>Gallery | 2026 Jai Veer Tejaji Club</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <style>
-    body {
-      margin: 0;
-      padding: 0;
-      background: #002b6b;
-      font-family: Arial, sans-serif;
-      color: #fff;
-      text-align: center;
+    body{
+      margin:0;
+      padding:0;
+      background:radial-gradient(circle at top,#0b4d2b,#032015);
+      font-family:Arial, sans-serif;
+      color:#fff;
+      text-align:center;
     }
 
-    h2 { margin-top: 20px; }
-
-    .subtitle {
-      font-size: 14px;
-      margin-bottom: 15px;
-      opacity: 0.9;
+    h2{
+      margin-top:20px;
+      color:#ffd65a;
+      font-size:22px;
     }
 
-    #gallery {
-      width: 90%;
-      margin: 0 auto 30px auto;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
+    .subtitle{
+      font-size:14px;
+      margin-bottom:15px;
+      color:#ffecb3;
     }
 
-    .photo-card {
-      background: #011b3c;
-      border-radius: 10px;
-      margin: 10px;
-      padding: 10px;
-      width: 220px;
-      box-shadow: 0 0 6px rgba(0,0,0,0.4);
+    #gallery{
+      width:90%;
+      margin:0 auto 30px auto;
+      display:flex;
+      flex-wrap:wrap;
+      justify-content:center;
     }
 
-    .photo-card img {
-      width: 200px;
-      height: 200px;
-      object-fit: cover;
-      border-radius: 8px;
-      display: block;
-      margin: 0 auto;
-      background: #000;
+    .photo-card{
+      background:rgba(0,0,0,0.6);
+      border-radius:12px;
+      margin:10px;
+      padding:10px;
+      width:220px;
+      box-shadow:0 0 8px rgba(0,0,0,0.6);
+      border:1px solid rgba(212,175,55,0.6);
     }
 
-    .caption {
-      margin-top: 8px;
-      font-size: 14px;
+    .photo-card img{
+      width:200px;
+      height:200px;
+      object-fit:cover;
+      border-radius:8px;
+      display:block;
+      margin:0 auto;
+      background:#000;
     }
 
-    #status {
-      margin-top: 15px;
-      font-size: 14px;
-      color: #ffdf80;
+    .caption{
+      margin-top:8px;
+      font-size:14px;
+      color:#ffe08a;
+    }
+
+    #status{
+      margin-top:15px;
+      font-size:14px;
+      color:#ffd65a;
+    }
+
+    footer{
+      font-size:12px;
+      padding:10px;
+      background:#000c;
+      color:#ddd;
     }
   </style>
 
@@ -66,56 +79,59 @@
 </head>
 <body>
 
-  <h2>📸 Exam & Event Gallery</h2>
+  <h2>📸 2026 Jai Veer Tejaji Club – Gallery</h2>
   <div class="subtitle">
-    Scholarship exam & events ki real photos dekhein 👇
+    Scholarship exam & events ki real photos 👇
   </div>
 
   <div id="status">Loading photos...</div>
   <div id="gallery"></div>
 
-  <script>
-    const SUPABASE_URL = "https://yyymjhuwjvyykukfzqow.supabase.co";
-    const SUPABASE_ANON_KEY =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl5eW1qaHV3anZ5eWt1a2Z6cW93Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ2NzMzMjIsImV4cCI6MjA4MDI0OTMyMn0.Ja9Do4cwumTnXx2NGIRW8Ti3rKm4MBiLClQz0xjOtrQ";
+  <footer>© 2026 Jai Veer Tejaji Club</footer>
 
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  <script>
+    /* 🔗 Supabase (NEW) */
+    const SUPABASE_URL = "https://iqcbgiwycbuyvxpegmfg.supabase.co";
+    const SUPABASE_ANON_KEY = "sb_publishable_BCvr1Fx0v1JgAWVE90ittw_bThpVl8C";
+
+    const supabase = window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_ANON_KEY
+    );
 
     const statusEl  = document.getElementById("status");
     const galleryEl = document.getElementById("gallery");
 
-    async function loadGallery() {
+    async function loadGallery(){
       statusEl.textContent = "Loading photos...";
 
       const { data, error } = await supabase
         .from("gallery_items")
         .select("*")
         .eq("visible", true)
-        .order("created_at", { ascending: false });
+        .order("created_at", { ascending:false });
 
-      if (error) {
+      if(error){
         console.error(error);
-        statusEl.textContent = "Error loading gallery. Please try again.";
+        statusEl.textContent = "Gallery load nahi ho rahi. Thodi der baad try karein.";
         return;
       }
 
       galleryEl.innerHTML = "";
 
-      if (!data || data.length === 0) {
-        statusEl.textContent = "No photos available yet.";
+      if(!data || data.length === 0){
+        statusEl.textContent = "Abhi koi photo available nahi hai.";
         return;
       }
 
       statusEl.textContent = "";
 
-      data.forEach(item => {
+      data.forEach(item=>{
         const card = document.createElement("div");
         card.className = "photo-card";
 
-        const imgSrc = item.public_url || "";
-
         card.innerHTML = `
-          <img src="${imgSrc}" alt="Image">
+          <img src="${item.public_url || ""}" alt="Gallery Image">
           <div class="caption">${item.caption || ""}</div>
         `;
 
@@ -125,5 +141,6 @@
 
     loadGallery();
   </script>
+
 </body>
 </html>
