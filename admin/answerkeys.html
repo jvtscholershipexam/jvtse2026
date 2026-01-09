@@ -2,30 +2,35 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Admin - Answer Keys</title>
+  <title>Admin | 2026 Jai Veer Tejaji Club - Answer Keys</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <style>
     *{box-sizing:border-box;margin:0;padding:0;}
     body{
       font-family:Arial, sans-serif;
-      background:radial-gradient(circle at top,#1a4fff 0%,#000b33 55%,#000316 100%);
+      background:radial-gradient(circle at top,#0b4d2b,#032015);
       color:#fff;
     }
     header{
       background:rgba(0,0,0,.8);
-      padding:8px 14px;
+      padding:10px 14px;
       display:flex;
       justify-content:space-between;
       align-items:center;
       flex-wrap:wrap;
-      border-bottom:2px solid #ffbf00;
+      border-bottom:2px solid #d4af37;
     }
-    .logo-text{font-size:18px;font-weight:bold;}
+    .logo-text{
+      font-size:18px;
+      font-weight:900;
+      color:#ffd65a;
+    }
     a.back{
-      color:#ffbf00;
+      color:#ffd65a;
       text-decoration:none;
       font-size:13px;
+      font-weight:bold;
     }
 
     .container{max-width:1000px;margin:18px auto;padding:0 10px;}
@@ -37,7 +42,7 @@
       border:1px solid rgba(255,255,255,.2);
     }
     h1{font-size:22px;margin-bottom:6px;}
-    h2{font-size:18px;margin:10px 0 6px;color:#ffd84d;}
+    h2{font-size:18px;margin:10px 0 6px;color:#ffd65a;}
 
     label{display:block;font-size:14px;margin-top:6px;}
     input{
@@ -54,12 +59,13 @@
       padding:9px 20px;
       border-radius:999px;
       border:none;
-      background:#ffbf00;
+      background:#d4af37;
       color:#000;
       font-weight:bold;
       cursor:pointer;
       font-size:14px;
     }
+
     .btn-small{
       padding:4px 10px;
       border-radius:14px;
@@ -87,36 +93,32 @@
     #msgBox{margin-top:6px;font-size:13px;}
   </style>
 
-  <!-- Supabase JS v2 (CDN) -->
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
 <header>
-  <div class="logo-text">Admin &mdash; Answer Keys</div>
+  <div class="logo-text">2026 Jai Veer Tejaji Club — Admin (Answer Keys)</div>
   <a class="back" href="dashboard.html">&larr; Back to Dashboard</a>
 </header>
 
 <div class="container">
 
-  <!-- ADD NEW ANSWER KEY -->
   <div class="card">
     <h1>Upload / Add Answer Key</h1>
-    <p style="font-size:13px;color:#ffeaa7;">
-      Aap yahaan ya to <b>direct PDF URL</b> daal sakte hain, ya phir
-      <b>PDF file upload</b> kar sakte hain. <br>
-      Students <b>Download</b> page se in answer keys ko dekh sakenge.
+    <p style="font-size:13px;color:#f3e3a2;">
+      Yahan aap <b>PDF upload</b> ya <b>direct PDF link</b> add kar sakte hain.
+      Ye answer keys students ko <b>Download</b> page par dikhenge.
     </p>
 
     <label>Exam / Paper Title</label>
-    <input type="text" id="akTitle" placeholder="e.g. Scholarship Exam 2026 - Answer Key">
+    <input type="text" id="akTitle">
 
     <label>Exam Date</label>
-    <!-- table me exam_date = date type hai, isliye date input -->
     <input type="date" id="akDate">
 
-    <label>PDF URL (https://...) – optional</label>
-    <input type="text" id="akUrl" placeholder="Agar file upload nahi karni ho to direct link yahan daalein">
+    <label>PDF URL (optional)</label>
+    <input type="text" id="akUrl">
 
     <label>PDF File (optional)</label>
     <input type="file" id="akFile" accept="application/pdf">
@@ -125,7 +127,6 @@
     <div id="msgBox"></div>
   </div>
 
-  <!-- CURRENT ANSWER KEYS -->
   <div class="card">
     <h2>Current Answer Keys</h2>
     <table>
@@ -148,18 +149,16 @@
 </div>
 
 <script>
-  // 🔐 Simple admin guard (same key jo baaki admin files me use ho rahi hai)
+  // 🔐 Admin guard
   if (localStorage.getItem("bdsAdminLoggedIn") !== "yes") {
     window.location.href = "login.html";
   }
 
-  // 🔗 Supabase config
-  const SUPABASE_URL = "https://yyymjhuwjvyykukfzqow.supabase.co";
-  const SUPABASE_ANON_KEY =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl5eW1qaHV3anZ5eWt1a2Z6cW93Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ2NzMzMjIsImV4cCI6MjA4MDI0OTMyMn0.Ja9Do4cwumTnXx2NGIRW8Ti3rKm4MBiLClQz0xjOtrQ";
-
-  const { createClient } = supabase;
-  const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  // ✅ NEW SUPABASE
+  const sb = supabase.createClient(
+    "https://iqcbgiwycbuyvxpegmfg.supabase.co",
+    "sb_publishable_BCvr1Fx0v1JgAWVE90ittw_bThpVl8C"
+  );
 
   function showMsg(text, color){
     const m = document.getElementById("msgBox");
@@ -167,200 +166,84 @@
     m.innerHTML = text;
   }
 
-  // 🔹 SAVE / UPLOAD ANSWER KEY
   async function saveAnswerKey(){
-    const title = document.getElementById("akTitle").value.trim();
-    const date  = document.getElementById("akDate").value.trim();   // YYYY-MM-DD aayega
-    const urlIn = document.getElementById("akUrl").value.trim();
-    const file  = document.getElementById("akFile").files[0];
+    const title = akTitle.value.trim();
+    const date  = akDate.value;
+    const urlIn = akUrl.value.trim();
+    const file  = akFile.files[0];
 
-    if(!title){
-      alert("Title zaroori hai.");
-      return;
+    if(!title){ alert("Title zaroori hai"); return; }
+    if(!urlIn && !file){ alert("PDF URL ya file zaroori hai"); return; }
+
+    showMsg("Saving...");
+
+    let finalUrl = urlIn;
+    let filePath = null;
+
+    if(file){
+      filePath = "answer_keys/" + Date.now() + "_" + file.name;
+      const { error } = await sb.storage.from("exam_files").upload(filePath, file);
+      if(error){ showMsg(error.message,"#ff8080"); return; }
+
+      const { data: pub } = sb.storage.from("exam_files").getPublicUrl(filePath);
+      if(pub?.publicUrl) finalUrl = pub.publicUrl;
     }
 
-    if(!urlIn && !file){
-      alert("Ya to PDF URL daalo, ya PDF file upload karo.");
-      return;
-    }
+    const { error } = await sb.from("answer_keys").insert({
+      exam_name: title,
+      exam_date: date || null,
+      public_url: finalUrl,
+      file_path: filePath,
+      visible: true
+    });
 
-    showMsg("Saving, please wait...");
+    if(error){ showMsg(error.message,"#ff8080"); return; }
 
-    let finalUrl  = urlIn || "";
-    let filePath  = null;
-
-    try {
-      // Agar file selected hai to Supabase storage par upload karo
-      if (file) {
-        // BUCKET NAME EXACT: exam_files
-        filePath = "answer_keys/" + Date.now() + "_" + file.name;
-
-        const { data: uploadData, error: uploadErr } = await sb
-          .storage
-          .from("exam_files")
-          .upload(filePath, file);
-
-        if (uploadErr) {
-          console.error(uploadErr);
-          showMsg("File upload error: " + uploadErr.message, "#ff8080");
-          return;
-        }
-
-        // Public URL nikaal lo
-        const { data: pub } = sb
-          .storage
-          .from("exam_files")
-          .getPublicUrl(filePath);
-
-        if (pub && pub.publicUrl) {
-          finalUrl = pub.publicUrl;
-        }
-      }
-
-      // Ab table me row insert karo
-      const { error: insertErr } = await sb
-        .from("answer_keys")
-        .insert([{
-          exam_name:  title,          // ✅ column name
-          exam_date:  date || null,   // ✅ date type
-          public_url: finalUrl || null,
-          file_path:  filePath,
-          visible:    true            // ✅ boolean column
-        }]);
-
-      if (insertErr) {
-        console.error(insertErr);
-        showMsg("Error: " + insertErr.message, "#ff8080");
-        return;
-      }
-
-      showMsg("Answer key saved successfully!","#22c55e");
-      document.getElementById("akTitle").value = "";
-      document.getElementById("akDate").value  = "";
-      document.getElementById("akUrl").value   = "";
-      document.getElementById("akFile").value  = "";
-      loadAnswerKeys();
-
-    } catch (err) {
-      console.error(err);
-      showMsg("Error: " + err.message, "#ff8080");
-    }
+    showMsg("Saved successfully!","#7CFC00");
+    akTitle.value = akDate.value = akUrl.value = akFile.value = "";
+    loadAnswerKeys();
   }
 
-  // 🔹 VISIBILITY TOGGLE
-  async function setVisibility(id,currentVisible){
-    try {
-      const { error } = await sb
-        .from("answer_keys")
-        .update({ visible: !currentVisible })
-        .eq("id", id);
-
-      if (error) {
-        console.error(error);
-        alert("Visibility change error: " + error.message);
-        return;
-      }
-      loadAnswerKeys();
-    } catch (err) {
-      console.error(err);
-      alert("Visibility change error: " + err.message);
-    }
+  async function setVisibility(id,v){
+    await sb.from("answer_keys").update({visible:!v}).eq("id",id);
+    loadAnswerKeys();
   }
 
-  // 🔹 DELETE ANSWER KEY
   async function deleteKey(id){
-    if(!confirm("Sure? Is answer key ko delete karna hai?")) return;
-
-    try {
-      const { error } = await sb
-        .from("answer_keys")
-        .delete()
-        .eq("id", id);
-
-      if (error) {
-        console.error(error);
-        alert("Delete error: " + error.message);
-        return;
-      }
-      loadAnswerKeys();
-    } catch (err) {
-      console.error(err);
-      alert("Delete error: " + err.message);
-    }
+    if(!confirm("Delete this answer key?")) return;
+    await sb.from("answer_keys").delete().eq("id",id);
+    loadAnswerKeys();
   }
 
-  // 🔹 LOAD LIST
   async function loadAnswerKeys(){
-    const body = document.getElementById("akTableBody");
-    body.innerHTML =
-      '<tr><td colspan="6" style="text-align:center;">Loading...</td></tr>';
+    const body = akTableBody;
+    body.innerHTML = "<tr><td colspan='6' style='text-align:center;'>Loading...</td></tr>";
 
-    try {
-      const { data, error } = await sb
-        .from("answer_keys")
-        .select("*")
-        .order("id", { ascending: false });
-
-      if (error) {
-        console.error(error);
-        body.innerHTML =
-          '<tr><td colspan="6" style="text-align:center;color:#ff8080;">Error: '+
-          error.message +'</td></tr>';
-        return;
-      }
-
-      if (!data || data.length === 0) {
-        body.innerHTML =
-          '<tr><td colspan="6" style="text-align:center;">No answer keys added yet.</td></tr>';
-        return;
-      }
-
-      body.innerHTML = "";
-      let i = 1;
-      data.forEach(row => {
-        const tr = document.createElement("tr");
-
-        // Final URL decide karo
-        let url = row.public_url || "";
-        if (!url && row.file_path) {
-          const { data: pub } = sb
-            .storage
-            .from("exam_files")
-            .getPublicUrl(row.file_path);
-          if (pub && pub.publicUrl) {
-            url = pub.publicUrl;
-          }
-        }
-
-        const visible = row.visible !== false;
-
-        tr.innerHTML =
-          "<td>"+(i++)+"</td>"+
-          "<td>"+(row.exam_name || "-")+"</td>"+
-          "<td>"+(row.exam_date || "-")+"</td>"+
-          "<td>"+(visible ? "Visible" : "Hidden")+"</td>"+
-          "<td>"+(
-            url
-              ? '<a href="'+url+'" target="_blank" style="color:#ffbf00;">Open</a>'
-              : '-'
-          )+"</td>"+
-          "<td>"+
-            '<button class="btn-small '+(visible?'btn-hide':'btn-visible')+'" '+
-              'onclick="setVisibility('+row.id+','+visible+')">'+
-                (visible ? 'Hide' : 'Make Visible')+
-            '</button> '+
-            '<button class="btn-small btn-delete" onclick="deleteKey('+row.id+')">Delete</button>'+
-          "</td>";
-
-        body.appendChild(tr);
-      });
-
-    } catch (err) {
-      console.error(err);
-      body.innerHTML =
-        '<tr><td colspan="6" style="text-align:center;color:#ff8080;">Error: '+
-        err.message +'</td></tr>';
+    const { data } = await sb.from("answer_keys").select("*").order("id",{ascending:false});
+    if(!data || !data.length){
+      body.innerHTML="<tr><td colspan='6' style='text-align:center;'>No data</td></tr>";
+      return;
     }
+
+    body.innerHTML="";
+    let i=1;
+    data.forEach(r=>{
+      body.innerHTML+=`
+        <tr>
+          <td>${i++}</td>
+          <td>${r.exam_name||"-"}</td>
+          <td>${r.exam_date||"-"}</td>
+          <td>${r.visible!==false?"Visible":"Hidden"}</td>
+          <td>${r.public_url?`<a href="${r.public_url}" target="_blank" style="color:#ffd65a;">Open</a>`:"-"}</td>
+          <td>
+            <button class="btn-small ${r.visible?'btn-hide':'btn-visible'}"
+              onclick="setVisibility(${r.id},${r.visible!==false})">
+              ${r.visible?'Hide':'Show'}
+            </button>
+            <button class="btn-small btn-delete" onclick="deleteKey(${r.id})">Delete</button>
+          </td>
+        </tr>`;
+    });
   }
 
   loadAnswerKeys();
