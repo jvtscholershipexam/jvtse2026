@@ -2,27 +2,28 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Form Status & Payment Receipt | BDS Mega Talent Hub</title>
+  <title>Form Status & Payment Receipt | 2026 Jai Veer Tejaji Club</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
     *{box-sizing:border-box;margin:0;padding:0;}
     body{
       font-family: Arial, sans-serif;
-      background: radial-gradient(circle at top, #003f8f, #000820);
+      background: radial-gradient(circle at top,#0b4d2b,#032015);
       color:#fff;
     }
     header{
-      background:rgba(0,0,0,0.7);
+      background:rgba(0,0,0,0.75);
       padding:10px 15px;
-      border-bottom:2px solid #ffb400;
+      border-bottom:2px solid #d4af37;
       text-align:center;
-      font-weight:700;
+      font-weight:800;
       font-size:18px;
+      color:#ffd65a;
     }
     nav{
       text-align:center;
-      background:rgba(0,0,0,0.5);
+      background:rgba(0,0,0,0.55);
       padding:8px 0;
       display:flex;
       flex-wrap:wrap;
@@ -35,20 +36,20 @@
       font-size:13px;
       font-weight:bold;
     }
-    nav a:hover{text-decoration:underline;}
 
     .container{
       max-width:650px;
       margin:20px auto 40px;
       background:rgba(0,0,0,0.6);
       padding:15px;
-      border-radius:10px;
-      box-shadow:0 0 15px rgba(0,0,0,0.5);
+      border-radius:12px;
+      border:1px solid rgba(212,175,55,0.6);
     }
     h1{
       font-size:20px;
       margin-bottom:8px;
       text-align:center;
+      color:#ffd65a;
     }
     p.small{
       font-size:13px;
@@ -57,11 +58,7 @@
       color:#ffecb3;
     }
 
-    label{
-      display:block;
-      font-size:14px;
-      margin-top:8px;
-    }
+    label{display:block;font-size:14px;margin-top:8px;}
     input{
       width:100%;
       padding:7px 9px;
@@ -76,134 +73,25 @@
       padding:9px 0;
       border:none;
       border-radius:999px;
-      background:#ffbf00;
+      background:#d4af37;
       color:#000;
       font-weight:bold;
       font-size:14px;
       cursor:pointer;
     }
-    button:disabled{
-      opacity:.6;
-      cursor:default;
-    }
-    #msgBox{
-      margin-top:10px;
-      font-size:13px;
-      text-align:center;
-    }
+
+    #msgBox{margin-top:10px;font-size:13px;text-align:center;}
 
     .result-card{
       margin-top:12px;
-      background:#00152f;
+      background:#021b12;
       border-radius:10px;
-      border:1px solid #ffbf00;
+      border:1px solid #d4af37;
       padding:10px 12px;
       font-size:14px;
     }
-    .row{
-      display:flex;
-      justify-content:space-between;
-      margin-bottom:4px;
-    }
+    .row{display:flex;justify-content:space-between;margin-bottom:4px;}
     .row span.label{font-weight:bold;}
-
-    /* ==== RECEIPT STYLES ==== */
-    .receipt-wrapper{
-      margin-top:18px;
-      display:none;
-    }
-    .receipt-heading{
-      font-size:18px;
-      text-align:center;
-      margin-bottom:6px;
-    }
-    .btn-download{
-      width:auto;
-      padding:8px 16px;
-      margin:0 auto 10px;
-      display:block;
-    }
-    .receipt-box{
-      background:#fff;
-      color:#000;
-      border-radius:10px;
-      padding:10px 12px;
-      border:3px double #000;
-      font-size:12px;
-    }
-    .receipt-page{
-      font-size:12px;
-    }
-    .receipt-copy{
-      border:2px solid #000;
-      border-radius:6px;
-      padding:8px 10px;
-      margin-bottom:4px;
-      min-height:200px;
-    }
-    .receipt-header{
-      text-align:center;
-      padding-bottom:4px;
-      border-bottom:1px solid #aaa;
-      margin-bottom:4px;
-    }
-    .receipt-header h2{
-      font-size:16px;
-      margin-bottom:2px;
-      color:#b20c0c;
-    }
-    .receipt-header div{font-size:11px;}
-
-    .receipt-logo{
-      height:40px;
-      width:auto;
-      margin-bottom:4px;
-    }
-
-    .copy-label{
-      text-align:right;
-      font-size:11px;
-      font-weight:bold;
-    }
-
-    .rec-row{
-      display:flex;
-      justify-content:space-between;
-      font-size:12px;
-      margin:2px 0;
-    }
-    .rec-row .label{font-weight:bold;}
-
-    .rec-footer{
-      border-top:1px solid #aaa;
-      margin-top:4px;
-      padding-top:3px;
-      font-size:10px;
-    }
-
-    .sign-row{
-      display:flex;
-      justify-content:space-between;
-      margin-top:10px;
-      font-size:11px;
-      align-items:flex-end;
-    }
-    .sign-cell{
-      width:45%;
-      text-align:center;
-    }
-    .sign-line{
-      display:block;
-      border-top:1px solid #000;
-      margin:10px 0 3px;
-    }
-
-    .seal-img{
-      max-width:120px;
-      height:auto;
-      display:block;
-      margin:0 auto 4px;
-    }
 
     footer{
       background:#000c;
@@ -214,15 +102,13 @@
     }
   </style>
 
-  <!-- Supabase JS -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <!-- PDF libraries -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
 
-<header>BABA DEEP SINGH MEGA TALENT HUB</header>
+<header>2026 JAI VEER TEJAJI CLUB</header>
 
 <nav>
   <a href="index.html">HOME</a>
@@ -239,275 +125,82 @@
 <div class="container">
   <h1>Check Your Form Status & Payment Receipt</h1>
   <p class="small">
-    Yahan Roll Number aur Date of Birth dal kar apne form ka status aur (agar approve ho chuka hai)
-    to payment receipt dekh sakte hain.
+    Roll Number aur Date of Birth dal kar apna form status aur payment receipt check karein.
   </p>
 
-  <label for="rollInput">Roll Number</label>
-  <input type="text" id="rollInput" placeholder="Jaise: BDS260055">
+  <label>Roll Number</label>
+  <input type="text" id="rollInput" placeholder="Jaise: JVTS26001">
 
-  <label for="dobInput">Date of Birth</label>
+  <label>Date of Birth</label>
   <input type="date" id="dobInput">
 
   <button id="btnCheck">Check Status & Receipt</button>
-
   <div id="msgBox"></div>
 
-  <!-- STATUS RESULT -->
   <div id="resultBox" class="result-card" style="display:none;"></div>
-
-  <!-- RECEIPT AREA -->
-  <div id="receiptWrapper" class="receipt-wrapper">
-    <div class="receipt-heading">Payment Receipt (Student Copy)</div>
-    <button id="btnDownload" class="btn-primary btn-download" style="display:none;">
-      Download Receipt (PDF)
-    </button>
-    <div id="receiptBox" class="receipt-box"></div>
-  </div>
 </div>
 
-<footer>
-  © 2026 Baba Deep Singh Mega Talent Hub
-</footer>
+<footer>© 2026 Jai Veer Tejaji Club</footer>
 
 <script>
-  // Supabase client
   const sb = supabase.createClient(
-    "https://yyymjhuwjvyykukfzqow.supabase.co",
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl5eW1qaHV3anZ5eWt1a2Z6cW93Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ2NzMzMjIsImV4cCI6MjA4MDI0OTMyMn0.Ja9Do4cwumTnXx2NGIRW8Ti3rKm4MBiLClQz0xjOtrQ"
+    "https://iqcbgiwycbuyvxpegmfg.supabase.co",
+    "sb_publishable_BCvr1Fx0v1JgAWVE90ittw_bThpVl8C"
   );
 
-  const rollInput  = document.getElementById("rollInput");
-  const dobInput   = document.getElementById("dobInput");
-  const btnCheck   = document.getElementById("btnCheck");
-  const msgBox     = document.getElementById("msgBox");
-  const resultBox  = document.getElementById("resultBox");
-
-  const receiptWrapper = document.getElementById("receiptWrapper");
-  const receiptBox     = document.getElementById("receiptBox");
-  const btnDownload    = document.getElementById("btnDownload");
-
-  const EXAM_NAME      = "Future Achievers Scholarship Exam 2026";
-  const INSTITUTE_NAME = "Baba Deep Singh Mega Talent Hub";
-  const CLUB_NAME      = "Baba Deep Singh Fitness Club";
-  const REG_NO         = "RJ160075255";
-  const DEFAULT_FEE    = 200;
-
-  function showMsg(text, color){
-    msgBox.textContent = text;
-    msgBox.style.color = color || "#fff";
-  }
+  const rollInput = document.getElementById("rollInput");
+  const dobInput  = document.getElementById("dobInput");
+  const btnCheck  = document.getElementById("btnCheck");
+  const msgBox    = document.getElementById("msgBox");
+  const resultBox = document.getElementById("resultBox");
 
   btnCheck.addEventListener("click", async ()=>{
     const roll = rollInput.value.trim().toUpperCase();
-    const dob  = dobInput.value;   // yyyy-mm-dd
+    const dob  = dobInput.value;
 
-    resultBox.style.display    = "none";
-    resultBox.innerHTML        = "";
-    receiptWrapper.style.display = "none";
-    receiptBox.innerHTML       = "";
-    btnDownload.style.display  = "none";
-    showMsg("", "#fff");
+    resultBox.style.display="none";
+    msgBox.textContent="";
 
     if(!roll || !dob){
-      showMsg("Roll Number aur Date of Birth dono bharna zaruri hai.","#ff8080");
+      msgBox.textContent="Roll Number aur DOB dono required hai.";
+      msgBox.style.color="#ff8080";
       return;
     }
 
-    btnCheck.disabled = true;
-    showMsg("Please wait, record search ho raha hai...","#fff");
+    btnCheck.disabled=true;
+    msgBox.textContent="Searching record...";
 
-    try{
-      // yahan receipt ke liye extra columns bhi le rahe hain
-      const { data: stu, error } = await sb
-        .from("students")
-        .select(`
-          full_name,
-          father_name,
-          roll_number,
-          dob,
-          form_status,
-          payment_status,
-          exam_center,
-          payment_amount,
-          payment_mode,
-          upi_txn,
-          created_at
-        `)
-        .eq("roll_number", roll)
-        .maybeSingle();
+    const { data, error } = await sb
+      .from("students")
+      .select("*")
+      .eq("roll_number", roll)
+      .maybeSingle();
 
-      if(error){
-        console.error(error);
-        showMsg("Error: " + error.message, "#ff8080");
-        btnCheck.disabled = false;
-        return;
-      }
-
-      if(!stu){
-        showMsg("Is Roll Number se koi record nahi mila. Roll dobara check karein.","#ff8080");
-        btnCheck.disabled = false;
-        return;
-      }
-
-      // DOB match check
-      if(!stu.dob || stu.dob !== dob){
-        showMsg("DOB match nahi ho rahi. Sahi Date of Birth enter karein.","#ff8080");
-        btnCheck.disabled = false;
-        return;
-      }
-
-      const formStatus  = (stu.form_status  || "pending").toString().toUpperCase();
-      const payStatus   = (stu.payment_status || "pending").toString().toUpperCase();
-
-      // ---- STATUS CARD ----
-      let htmlStatus = "";
-      htmlStatus += `<div class="row"><span class="label">Name:</span><span>${stu.full_name || ""}</span></div>`;
-      htmlStatus += `<div class="row"><span class="label">Roll No:</span><span>${stu.roll_number || ""}</span></div>`;
-      htmlStatus += `<div class="row"><span class="label">Father's Name:</span><span>${stu.father_name || ""}</span></div>`;
-      htmlStatus += `<div class="row"><span class="label">Form Status:</span><span>${formStatus}</span></div>`;
-      htmlStatus += `<div class="row"><span class="label">Payment Status:</span><span>${payStatus}</span></div>`;
-
-      resultBox.innerHTML = htmlStatus;
-      resultBox.style.display = "block";
-
-      // ---- RECEIPT LOGIC ----
-      const okPay   = ["APPROVED","SUCCESS","SUCCESSFUL","VERIFIED","PAID"];
-      const okForm  = ["APPROVED","VERIFIED","ACCEPTED"];
-
-      if(!okPay.includes(payStatus) || !okForm.includes(formStatus)){
-        showMsg(
-          "Status loaded. Receipt tabhi milegi jab aapka form aur payment dono APPROVED ho jayenge.",
-          "#ffcc66"
-        );
-        btnCheck.disabled = false;
-        return;
-      }
-
-      // Receipt ke liye data
-      const amount = stu.payment_amount || DEFAULT_FEE;
-      const mode   = stu.payment_mode || "UPI";
-      const txnId  = stu.upi_txn || "Not Available";
-      const center = stu.exam_center || "Not Assigned";
-      const payDateRaw = stu.created_at || "";
-      const payDate = payDateRaw ? new Date(payDateRaw).toLocaleString("en-IN") : "Not Available";
-
-      const cleanRoll = (stu.roll_number || "").replace(/\s+/g, "");
-      const receiptNo = "BDSREC-" + cleanRoll;
-
-      const receiptHtml = `
-        <div class="receipt-page">
-          <div class="receipt-copy">
-            <div class="copy-label">Student Copy</div>
-
-            <div class="receipt-header">
-              <img src="bds-logo.png" class="receipt-logo" alt="BDS Logo">
-              <h2>${EXAM_NAME}</h2>
-              <div><b>${INSTITUTE_NAME}</b></div>
-              <div>${CLUB_NAME} &nbsp; (Reg. No.: ${REG_NO})</div>
-              <div style="margin-top:3px;font-weight:bold;">FEE PAYMENT RECEIPT</div>
-            </div>
-
-            <div class="rec-row">
-              <span class="label">Receipt No.:</span>
-              <span>${receiptNo}</span>
-            </div>
-
-            <div class="rec-row">
-              <span class="label">Student Name:</span>
-              <span>${stu.full_name || ""}</span>
-            </div>
-            <div class="rec-row">
-              <span class="label">Father Name:</span>
-              <span>${stu.father_name || ""}</span>
-            </div>
-            <div class="rec-row">
-              <span class="label">Roll No.:</span>
-              <span>${stu.roll_number || ""}</span>
-            </div>
-            <div class="rec-row">
-              <span class="label">Mobile:</span>
-              <span>${"" /* mobile nahi liya is page pe, chahe to select me add kar sakte ho */}</span>
-            </div>
-            <div class="rec-row">
-              <span class="label">Exam Name:</span>
-              <span>${EXAM_NAME}</span>
-            </div>
-            <div class="rec-row">
-              <span class="label">Centre Name:</span>
-              <span>${center}</span>
-            </div>
-
-            <div class="rec-row">
-              <span class="label">Amount Received:</span>
-              <span>₹ ${amount}</span>
-            </div>
-            <div class="rec-row">
-              <span class="label">Payment Mode:</span>
-              <span>${mode}</span>
-            </div>
-            <div class="rec-row">
-              <span class="label">Transaction ID:</span>
-              <span>${txnId}</span>
-            </div>
-            <div class="rec-row">
-              <span class="label">Payment Date &amp; Time:</span>
-              <span>${payDate}</span>
-            </div>
-
-            <div class="sign-row">
-              <div class="sign-cell">
-                <span class="sign-line"></span>
-                Student Signature
-              </div>
-              <div class="sign-cell">
-                <img src="bds-seal.png" alt="Seal & Signature" class="seal-img">
-                <div style="font-size:10px;margin-top:2px;">
-                  Authorized Signatory<br>
-                  Sukhvinder Singh<br>
-                  ${CLUB_NAME}
-                </div>
-              </div>
-            </div>
-
-            <div class="rec-footer">
-              Ye computer-generated receipt hai. Is par alag se ink signature ki awashyakta nahi hai.
-            </div>
-          </div>
-        </div>
-      `;
-
-      receiptBox.innerHTML = receiptHtml;
-      receiptWrapper.style.display = "block";
-      btnDownload.style.display = "block";
-
-      showMsg("Status & receipt successfully loaded.","#7CFC00");
-      btnCheck.disabled = false;
-
-    }catch(err){
-      console.error(err);
-      showMsg("Unexpected error: " + err.message,"#ff8080");
-      btnCheck.disabled = false;
+    if(error || !data){
+      msgBox.textContent="Record nahi mila.";
+      msgBox.style.color="#ff8080";
+      btnCheck.disabled=false;
+      return;
     }
-  });
 
-  // PDF download
-  btnDownload.addEventListener("click", async () => {
-    if (!receiptBox.innerHTML.trim()) return;
+    if(data.dob !== dob){
+      msgBox.textContent="DOB match nahi ho rahi.";
+      msgBox.style.color="#ff8080";
+      btnCheck.disabled=false;
+      return;
+    }
 
-    const { jsPDF } = window.jspdf;
-    const pdf = new jsPDF("p","mm","a4");
+    resultBox.innerHTML = `
+      <div class="row"><span class="label">Name:</span><span>${data.full_name}</span></div>
+      <div class="row"><span class="label">Roll No:</span><span>${data.roll_number}</span></div>
+      <div class="row"><span class="label">Form Status:</span><span>${(data.form_status||"").toUpperCase()}</span></div>
+      <div class="row"><span class="label">Payment Status:</span><span>${(data.payment_status||"").toUpperCase()}</span></div>
+    `;
+    resultBox.style.display="block";
 
-    const canvas = await html2canvas(receiptBox, { scale: 2, useCORS: true });
-    const imgData = canvas.toDataURL("image/png");
-
-    const pageWidth = 210;
-    const margin = 10;
-    const imgWidth = pageWidth - margin * 2;
-    const imgHeight = canvas.height * imgWidth / canvas.width;
-
-    pdf.addImage(imgData, "PNG", margin, 10, imgWidth, imgHeight);
-    pdf.save("BDS_Payment_Receipt.pdf");
+    msgBox.textContent="Status loaded successfully.";
+    msgBox.style.color="#7CFC00";
+    btnCheck.disabled=false;
   });
 </script>
 
