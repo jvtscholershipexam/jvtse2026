@@ -2,68 +2,83 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Student Login | BDS Exam Portal</title>
+  <title>Student Login | 2026 Jai Veer Tejaji Club</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f5f5f5;
+      background: radial-gradient(circle at top, #0b4d2b, #032015);
       margin: 0;
       padding: 0;
     }
+
     .container {
       max-width: 420px;
       margin: 40px auto;
-      background: #ffffff;
+      background: rgba(0,0,0,0.75);
       padding: 20px 25px;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      border-radius: 10px;
+      box-shadow: 0 0 12px rgba(0,0,0,0.6);
+      color: #fff;
     }
+
     h2 {
       margin-top: 0;
       text-align: center;
-      color: #b20c0c;
+      color: #ffd65a;
+      font-weight: 900;
     }
+
     label {
       font-size: 14px;
       display: block;
       margin-bottom: 4px;
     }
+
     input {
       width: 100%;
       padding: 8px 10px;
       margin-bottom: 12px;
-      border-radius: 4px;
-      border: 1px solid #ccc;
+      border-radius: 6px;
+      border: none;
       font-size: 14px;
       box-sizing: border-box;
     }
+
     button {
       width: 100%;
       padding: 10px;
       border: none;
-      border-radius: 4px;
-      background: #b20c0c;
-      color: #fff;
+      border-radius: 25px;
+      background: #d4af37;
+      color: #000;
       font-size: 15px;
+      font-weight: bold;
       cursor: pointer;
     }
+
     button:disabled {
       opacity: 0.6;
       cursor: not-allowed;
     }
+
     .msg {
       margin-top: 10px;
       font-size: 14px;
+      text-align: center;
     }
+
     .small {
       font-size: 12px;
       text-align: center;
       margin-top: 12px;
     }
+
     a {
-      color: #b20c0c;
+      color: #ffd65a;
       text-decoration: none;
+      font-weight: bold;
     }
   </style>
 
@@ -71,14 +86,15 @@
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 </head>
 <body>
+
   <div class="container">
-    <h2>Student Login</h2>
+    <h2>2026 Jai Veer Tejaji Club<br>Student Login</h2>
 
     <form id="loginForm">
-      <label for="mobile">Mobile Number *</label>
+      <label>Mobile Number *</label>
       <input type="tel" id="mobile" maxlength="10" required placeholder="Registered mobile number">
 
-      <label for="password">Password *</label>
+      <label>Password *</label>
       <input type="password" id="password" required>
 
       <button type="submit" id="loginBtn">Login</button>
@@ -92,94 +108,81 @@
   </div>
 
   <script>
-    // Supabase config (tumhara project)
-    const SUPABASE_URL = "https://yyymjhuwjvyykukfzqow.supabase.co";
+    // ✅ Supabase config (NEW PROJECT)
+    const SUPABASE_URL = "https://iqcbgiwycbuyvxpegmfg.supabase.co";
     const SUPABASE_ANON_KEY =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl5eW1qaHV3anZ5eWt1a2Z6cW93Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ2NzMzMjIsImV4cCI6MjA4MDI0OTMyMn0.Ja9Do4cwumTnXx2NGIRW8Ti3rKm4MBiLClQz0xjOtrQ";
+      "sb_publishable_BCvr1Fx0v1JgAWVE90ittw_bThpVl8C";
 
     const { createClient } = supabase;
     const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    const form     = document.getElementById('loginForm');
-    const msgEl    = document.getElementById('msg');
-    const loginBtn = document.getElementById('loginBtn');
+    const form     = document.getElementById("loginForm");
+    const msgEl    = document.getElementById("msg");
+    const loginBtn = document.getElementById("loginBtn");
 
-    form.addEventListener('submit', async (e) => {
+    form.addEventListener("submit", async (e) => {
       e.preventDefault();
       msgEl.textContent = "";
-      msgEl.style.color = "black";
+      msgEl.style.color = "#fff";
 
-      const mobile   = document.getElementById('mobile').value.trim();
-      const password = document.getElementById('password').value.trim();
+      const mobile   = document.getElementById("mobile").value.trim();
+      const password = document.getElementById("password").value.trim();
 
-      // Basic validation
       if (mobile.length !== 10 || !/^[0-9]+$/.test(mobile)) {
-        msgEl.textContent = "Please enter valid 10 digit mobile number.";
-        msgEl.style.color = "red";
+        msgEl.textContent = "Valid 10 digit mobile number daalein.";
+        msgEl.style.color = "#ff8080";
         return;
       }
 
       if (!password) {
         msgEl.textContent = "Password required hai.";
-        msgEl.style.color = "red";
+        msgEl.style.color = "#ff8080";
         return;
       }
 
       loginBtn.disabled = true;
       msgEl.textContent = "Checking...";
-      msgEl.style.color = "black";
 
       try {
-        // students table se record nikaalo
         const { data, error } = await sb
           .from("students")
-          .select("id, full_name, mobile, login_password")
+          .select("id, mobile, login_password")
           .eq("mobile", mobile)
           .maybeSingle();
 
-        if (error) {
-          console.error(error);
-          msgEl.textContent = "Kuch error aayi, thodi der baad try karein.";
-          msgEl.style.color = "red";
+        if (error || !data) {
+          msgEl.textContent = "Mobile number registered nahi hai.";
+          msgEl.style.color = "#ff8080";
           loginBtn.disabled = false;
           return;
         }
 
-        if (!data) {
-          msgEl.textContent = "Ye mobile number registered nahi hai. Pehle registration karein.";
-          msgEl.style.color = "red";
-          loginBtn.disabled = false;
-          return;
-        }
-
-        // Password match check (students table ka column: login_password)
         if (!data.login_password || data.login_password !== password) {
-          msgEl.textContent = "Galat password. Dubara try karein.";
-          msgEl.style.color = "red";
+          msgEl.textContent = "Galat password.";
+          msgEl.style.color = "#ff8080";
           loginBtn.disabled = false;
           return;
         }
 
-        // ✅ Success — login done
-        // Dashboard ke liye
+        // ✅ success
         localStorage.setItem("student_mobile", mobile);
-        // Purane code compatibility (jahan studentId check ho raha tha)
         localStorage.setItem("studentId", mobile);
 
         msgEl.textContent = "Login successful!";
-        msgEl.style.color = "green";
+        msgEl.style.color = "#7CFC00";
 
         setTimeout(() => {
           window.location.href = "dashboard.html";
-        }, 1000);
+        }, 800);
 
       } catch (err) {
         console.error(err);
-        msgEl.textContent = "Kuch error aayi, thodi der baad try karein.";
-        msgEl.style.color = "red";
+        msgEl.textContent = "Kuch error aayi, baad me try karein.";
+        msgEl.style.color = "#ff8080";
         loginBtn.disabled = false;
       }
     });
   </script>
+
 </body>
 </html>
