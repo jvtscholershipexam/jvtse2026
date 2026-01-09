@@ -2,56 +2,105 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Admin – Gallery Upload | BDS Exam Portal</title>
+  <title>Admin – Gallery Upload | 2026 Jai Veer Tejaji Club</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <style>
-    body { font-family: Arial, sans-serif; background:#f5f5f5; margin:0; }
+    body {
+      font-family: Arial, sans-serif;
+      background:#032015;
+      margin:0;
+      color:#fff;
+    }
     .container {
       max-width: 800px;
       margin: 20px auto;
-      background:#fff;
+      background:rgba(0,0,0,0.7);
       padding: 15px;
-      border-radius:8px;
-      box-shadow:0 2px 8px rgba(0,0,0,0.2);
+      border-radius:10px;
+      box-shadow:0 0 12px #000;
+      border:1px solid rgba(255,255,255,0.15);
     }
-    h1 { margin-top:0; color:#b20c0c; }
-    label { display:block; margin-top:8px; font-size:14px; }
+    h1 {
+      margin-top:0;
+      color:#ffd65a;
+    }
+    label {
+      display:block;
+      margin-top:8px;
+      font-size:14px;
+    }
     input[type="text"] {
-      width:100%; padding:7px; box-sizing:border-box;
-      border-radius:4px; border:1px solid #ccc; margin-top:3px;
-    }
-    input[type="file"] { margin-top:5px; }
-    button {
-      margin-top:12px; padding:8px 14px;
-      border:none; border-radius:4px;
-      background:#1976d2; color:#fff;
-      cursor:pointer; font-size:14px;
-    }
-    button:disabled { opacity:0.6; cursor:not-allowed; }
-    .msg { margin-top:8px; font-size:13px; }
-    .preview-list { margin-top:15px; display:flex; flex-wrap:wrap; gap:10px; }
-    .preview-item {
-      width:140px; text-align:center; font-size:12px;
-      border:1px solid #ddd;
+      width:100%;
+      padding:7px;
+      box-sizing:border-box;
       border-radius:6px;
+      border:none;
+      margin-top:3px;
+    }
+    input[type="file"] {
+      margin-top:5px;
+      color:#fff;
+    }
+    button {
+      margin-top:12px;
+      padding:8px 16px;
+      border:none;
+      border-radius:999px;
+      background:#d4af37;
+      color:#000;
+      cursor:pointer;
+      font-size:14px;
+      font-weight:bold;
+    }
+    button:disabled {
+      opacity:0.6;
+      cursor:not-allowed;
+    }
+    .msg {
+      margin-top:8px;
+      font-size:13px;
+    }
+    .preview-list {
+      margin-top:15px;
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+    }
+    .preview-item {
+      width:140px;
+      text-align:center;
+      font-size:12px;
+      border:1px solid rgba(255,255,255,0.2);
+      border-radius:8px;
       padding:6px;
-      background:#fafafa;
+      background:#001c12;
     }
     .preview-item img {
-      width:110px; height:110px; object-fit:cover;
-      border-radius:6px; border:1px solid #ccc;
+      width:110px;
+      height:110px;
+      object-fit:cover;
+      border-radius:6px;
+      border:1px solid #d4af37;
     }
-    .topbar-links a { margin-right:8px; font-size:13px; text-decoration:none; color:#1976d2; }
+    .topbar-links a {
+      margin-right:8px;
+      font-size:13px;
+      text-decoration:none;
+      color:#ffd65a;
+    }
 
     .btn-small {
       margin-top:6px;
       padding:4px 8px;
       font-size:11px;
-      border-radius:4px;
+      border-radius:6px;
+      border:none;
+      cursor:pointer;
     }
     .btn-delete {
-      background:#d32f2f;
+      background:#c62828;
+      color:#fff;
     }
   </style>
 
@@ -68,16 +117,16 @@
   </div>
 
   <h1>Gallery Photo Upload</h1>
-  <p style="font-size:13px;">
-    Yahan se jo photo upload karoge, woh <b>gallery.html</b> page par dikhengi.<br>
-    Supabase me <code>gallery_items</code> table aur <code>gallery</code> bucket use ho raha hai.
+  <p style="font-size:13px;color:#e6e6e6;">
+    Yahan upload ki gayi photos <b>gallery.html</b> par show hongi.<br>
+    Project: <b>2026 Jai Veer Tejaji Club</b>
   </p>
 
   <label>Select Image File</label>
   <input type="file" id="photoFile" accept="image/*">
 
   <label>Caption (optional)</label>
-  <input type="text" id="captionInput" placeholder="Jaise: Exam hall, Prize distribution...">
+  <input type="text" id="captionInput" placeholder="Exam hall, Prize distribution...">
 
   <label style="margin-top:10px;">
     <input type="checkbox" id="visibleCheck" checked>
@@ -87,7 +136,7 @@
   <button id="uploadBtn">Upload to Gallery</button>
   <p class="msg" id="msgBox"></p>
 
-  <h3 style="margin-top:20px;">Latest Uploaded Photos</h3>
+  <h3 style="margin-top:20px;color:#ffd65a;">Latest Uploaded Photos</h3>
   <div id="previewList" class="preview-list"></div>
 </div>
 
@@ -97,13 +146,12 @@
     window.location.href = "login.html";
   }
 
-  // Supabase config
-  const SUPABASE_URL = "https://yyymjhuwjvyykukfzqow.supabase.co";
-  const SUPABASE_ANON_KEY =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl5eW1qaHV3anZ5eWt1a2Z6cW93Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ2NzMzMjIsImV4cCI6MjA4MDI0OTMyMn0.Ja9Do4cwumTnXx2NGIRW8Ti3rKm4MBiLClQz0xjOtrQ";
+  // ✅ Supabase config (NEW PROJECT)
+  const SUPABASE_URL = "https://iqcbgiwycbuyvxpegmfg.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_BCvr1Fx0v1JgAWVE90ittw_bThpVl8C";
+  const BUCKET_NAME  = "gallery";
 
-  const BUCKET_NAME = "gallery";
-  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
   const photoFileInput = document.getElementById("photoFile");
   const captionInput   = document.getElementById("captionInput");
@@ -119,47 +167,40 @@
     const visible = visibleCheck.checked;
 
     if (!file) {
-      msgBox.style.color = "red";
+      msgBox.style.color = "#ff8080";
       msgBox.textContent = "Please select an image file.";
       return;
     }
 
-    msgBox.style.color = "#000";
+    msgBox.style.color = "#fff";
     msgBox.textContent = "Uploading photo, please wait...";
     uploadBtn.disabled = true;
 
     try {
-      // Upload file to storage
       const filePath = `gallery/${Date.now()}_${file.name}`;
 
       const { error: uploadError } = await supabase
-        .storage
-        .from(BUCKET_NAME)
+        .storage.from(BUCKET_NAME)
         .upload(filePath, file);
 
       if (uploadError) throw uploadError;
 
-      // Get public URL
-      const { data: pub } = supabase.storage
-        .from(BUCKET_NAME)
+      const { data: pub } = supabase
+        .storage.from(BUCKET_NAME)
         .getPublicUrl(filePath);
 
-      const publicUrl = pub.publicUrl;
-
-      // Insert row into DB
       const { error: insertError } = await supabase
         .from("gallery_items")
         .insert({
           caption: caption || null,
           file_path: filePath,
-          public_url: publicUrl,
-          visible: visible,
-          created_at: new Date().toISOString()
+          public_url: pub.publicUrl,
+          visible: visible
         });
 
       if (insertError) throw insertError;
 
-      msgBox.style.color = "green";
+      msgBox.style.color = "#7CFC00";
       msgBox.textContent = "Photo uploaded successfully!";
 
       photoFileInput.value = "";
@@ -169,14 +210,14 @@
       loadLatestPhotos();
 
     } catch (err) {
-      msgBox.style.color = "red";
+      msgBox.style.color = "#ff8080";
       msgBox.textContent = "Error: " + err.message;
     } finally {
       uploadBtn.disabled = false;
     }
   });
 
-  // ================== LOAD & SHOW PHOTOS ==================
+  // ================== LOAD PHOTOS ==================
   async function loadLatestPhotos() {
     previewList.innerHTML = "Loading...";
 
@@ -187,7 +228,7 @@
       .limit(12);
 
     if (error) {
-      previewList.textContent = "Error loading preview: " + error.message;
+      previewList.textContent = "Error loading photos.";
       return;
     }
 
@@ -196,64 +237,31 @@
       const div = document.createElement("div");
       div.className = "preview-item";
       div.innerHTML = `
-        <img src="${row.public_url}" alt="img">
+        <img src="${row.public_url}">
         <div>${row.caption || ""}</div>
-        <div style="font-size:11px; color:${row.visible ? "green" : "red"};">
+        <div style="font-size:11px;color:${row.visible ? '#7CFC00' : '#ff8080'};">
           ${row.visible ? "Visible" : "Hidden"}
         </div>
-        <button class="btn-small btn-delete" data-id="${row.id}" data-path="${row.file_path}">
-          Delete
-        </button>
+        <button class="btn-small btn-delete"
+          onclick="deletePhoto(${row.id}, '${row.file_path}')">Delete</button>
       `;
       previewList.appendChild(div);
     });
-
-    // har delete button par click listener
-    document.querySelectorAll(".btn-delete").forEach(btn => {
-      btn.addEventListener("click", () => {
-        const id   = btn.getAttribute("data-id");
-        const path = btn.getAttribute("data-path");
-        deletePhoto(id, path);
-      });
-    });
   }
 
-  // ================== DELETE PHOTO ==================
-  async function deletePhoto(id, filePath) {
-    const ok = confirm("Ye photo gallery se permanently delete ho jayegi. Continue?");
-    if (!ok) return;
-
-    msgBox.style.color = "#000";
-    msgBox.textContent = "Deleting photo...";
+  // ================== DELETE ==================
+  async function deletePhoto(id, path) {
+    if (!confirm("Photo permanently delete hogi. Continue?")) return;
 
     try {
-      // 1) Storage se file delete
-      const { error: storageErr } = await supabase
-        .storage
-        .from(BUCKET_NAME)
-        .remove([filePath]);
-
-      if (storageErr) throw storageErr;
-
-      // 2) Table se row delete
-      const { error: dbErr } = await supabase
-        .from("gallery_items")
-        .delete()
-        .eq("id", id);
-
-      if (dbErr) throw dbErr;
-
-      msgBox.style.color = "green";
-      msgBox.textContent = "Photo deleted successfully.";
-
+      await supabase.storage.from(BUCKET_NAME).remove([path]);
+      await supabase.from("gallery_items").delete().eq("id", id);
       loadLatestPhotos();
     } catch (err) {
-      msgBox.style.color = "red";
-      msgBox.textContent = "Error deleting photo: " + err.message;
+      alert("Delete error: " + err.message);
     }
   }
 
-  // Initial load
   loadLatestPhotos();
 </script>
 
