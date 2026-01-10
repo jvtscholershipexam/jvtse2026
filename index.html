@@ -7,7 +7,6 @@
 
   <style>
     *{box-sizing:border-box;margin:0;padding:0;}
-
     body{
       font-family: Arial, sans-serif;
       background: radial-gradient(circle at top, #0b4d2b, #032015);
@@ -25,7 +24,6 @@
       font-weight:900;
       font-size:18px;
       color:#ffd65a;
-      text-align:center;
     }
     header img{height:36px;}
 
@@ -47,57 +45,51 @@
 
     .main{
       max-width:1000px;
-      margin:15px auto 40px;
+      margin:15px auto;
       padding:0 10px;
       display:flex;
       flex-wrap:wrap;
       gap:15px;
-      justify-content:center;
     }
-    .left{flex:1 1 260px;}
-    .right{flex:1 1 260px;text-align:center;}
-
-    .headline{
-      font-size:26px;
-      font-weight:900;
-      margin-bottom:10px;
-      color:#ffd65a;
-    }
-    .subline{
-      font-size:16px;
-      font-weight:700;
-      margin-bottom:10px;
-      color:#f3e3a2;
-    }
-
-    ul.points{
-      font-size:15px;
-      font-weight:700;
-      margin-left:18px;
-      margin-bottom:10px;
-      line-height:1.45;
-    }
-    ul.points li{margin-bottom:6px;}
-
-    .btn-apply{
-      display:inline-block;
-      background:#d4af37;
-      color:#000;
-      padding:10px 22px;
-      border-radius:25px;
-      font-weight:700;
-      font-size:15px;
-      margin-top:12px;
-      margin-right:6px;
-      text-decoration:none;
-    }
-    .btn-apply:hover{background:#ffe08a;}
+    .left{flex:1}
+    .right{flex:1;text-align:center}
 
     .poster{
-      width:100%;
       max-width:380px;
+      width:100%;
       border-radius:12px;
       border:2px solid #d4af37;
+    }
+
+    .section{
+      margin:25px auto;
+      max-width:1000px;
+      padding:0 10px;
+    }
+    .section h2{
+      color:#ffd65a;
+      margin-bottom:10px;
+    }
+
+    .notice{
+      background:#021b12;
+      padding:10px;
+      border-radius:8px;
+      margin-bottom:8px;
+      border-left:4px solid #d4af37;
+    }
+
+    .gallery{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+    }
+    .gallery img{
+      width:150px;
+      height:150px;
+      object-fit:cover;
+      border-radius:8px;
+      border:1px solid #d4af37;
     }
 
     footer{
@@ -112,7 +104,7 @@
 <body>
 
 <header>
-  <img src="logo.png" alt="Logo">
+  <img src="logo.png" onerror="this.style.display='none'">
   2026 JAI VEER TEJAJI CLUB
 </header>
 
@@ -130,51 +122,55 @@
 
 <div class="main">
   <div class="left">
-    <div class="headline">Jai Veer Tejaji Scholarship Exam 2026</div>
-    <div class="subline">Show your talent & win exciting prizes.</div>
-
-    <ul class="points">
-      <li>1st Prize: ₹7,100</li>
-      <li>2nd Prize: ₹5,100</li>
-      <li>3rd Prize: ₹2,100</li>
-      <li>4th to 40th Rank: ₹1,100</li>
-      <li>First 500 Students: Certificate</li>
-      <li>Exam Date: May 2026</li>
-      <li>Form Last Date: 20 April 2026</li>
-    </ul>
-
-    <a class="btn-apply" href="apply.html">Apply Now</a>
-
-    <!-- ✅ State syllabus -->
-    <a class="btn-apply"
-       href="syllabus.pdf"
-       target="_blank"
-       download>
-      📘 Download State Syllabus
-    </a>
-
-    <!-- ✅ Centre syllabus (FIXED) -->
-    <a class="btn-apply"
-       href="centre-syllabus.pdf"
-       target="_blank"
-       download>
-      🏫 Download Centre Syllabus
-    </a>
+    <h1>Jai Veer Tejaji Scholarship Exam 2026</h1>
+    <p>Show your talent & win exciting prizes.</p>
   </div>
-
   <div class="right">
     <img id="heroPoster" class="poster" src="flex.jpg">
   </div>
+</div>
+
+<!-- 🔔 NOTICES -->
+<div class="section">
+  <h2>📢 Latest Notices</h2>
+  <div id="noticeBox">Loading notices...</div>
+</div>
+
+<!-- 🖼 GALLERY -->
+<div class="section">
+  <h2>📸 Gallery</h2>
+  <div id="galleryBox" class="gallery"></div>
 </div>
 
 <footer>© 2026 Jai Veer Tejaji Club</footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const sb = supabase.createClient(
-  "https://iqcbgiwycbuyvxpegmfg.supabase.co",
-  "sb_publishable_BCvr1Fx0v1JgAWVE90ittw_bThpVl8C"
-);
+  const sb = supabase.createClient(
+    "https://iqcbgiwycbuyvxpegmfg.supabase.co",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlxY2JnaXd5Y2J1eXZweGVnbWZnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc5NDQ4MDYsImV4cCI6MjA4MzUyMDgwNn0.WfFbOZw2ZRRX9bWxQ0HMUqskAfIL4MvoyAENFPPatjM"
+  );
+
+  // 🔔 Load Notices
+  sb.from("notices").select("*").eq("active",true)
+    .order("created_at",{ascending:false})
+    .then(({data})=>{
+      const box=document.getElementById("noticeBox");
+      if(!data || !data.length){box.innerHTML="No notices";return;}
+      box.innerHTML=data.map(n=>`<div class="notice">${n.title}</div>`).join("");
+    });
+
+  // 🖼 Load Gallery
+  sb.from("gallery_items").select("*").eq("visible",true).limit(6)
+    .then(({data})=>{
+      const g=document.getElementById("galleryBox");
+      if(!data)return;
+      data.forEach(i=>{
+        const img=document.createElement("img");
+        img.src=i.public_url;
+        g.appendChild(img);
+      });
+    });
 </script>
 
 </body>
