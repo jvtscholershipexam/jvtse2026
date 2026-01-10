@@ -106,10 +106,6 @@
 
   <div class="card">
     <h1>Upload / Add Answer Key</h1>
-    <p style="font-size:13px;color:#f3e3a2;">
-      Yahan aap <b>PDF upload</b> ya <b>direct PDF link</b> add kar sakte hain.
-      Ye answer keys students ko <b>Download</b> page par dikhenge.
-    </p>
 
     <label>Exam / Paper Title</label>
     <input type="text" id="akTitle">
@@ -149,103 +145,72 @@
 </div>
 
 <script>
-  // 🔐 Admin guard
   if (localStorage.getItem("bdsAdminLoggedIn") !== "yes") {
     window.location.href = "login.html";
   }
 
-  // ✅ NEW SUPABASE
   const sb = supabase.createClient(
     "https://iqcbgiwycbuyvxpegmfg.supabase.co",
-    "sb_publishable_BCvr1Fx0v1JgAWVE90ittw_bThpVl8C"
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlxY2JnaXd5Y2J1eXZweGVnbWZnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc5NDQ4MDYsImV4cCI6MjA4MzUyMDgwNn0.WfFbOZw2ZRRXQ0HMUqskAfIL4MvoyAENFPPatjM"
   );
 
-  function showMsg(text, color){
-    const m = document.getElementById("msgBox");
-    m.style.color = color || "#fff";
-    m.innerHTML = text;
-  }
+  function showMsg(t,c){msgBox.style.color=c||"#fff";msgBox.innerHTML=t;}
 
   async function saveAnswerKey(){
-    const title = akTitle.value.trim();
-    const date  = akDate.value;
-    const urlIn = akUrl.value.trim();
-    const file  = akFile.files[0];
+    const title=akTitle.value.trim();
+    const date=akDate.value;
+    const urlIn=akUrl.value.trim();
+    const file=akFile.files[0];
 
-    if(!title){ alert("Title zaroori hai"); return; }
-    if(!urlIn && !file){ alert("PDF URL ya file zaroori hai"); return; }
+    if(!title){alert("Title required");return;}
+    if(!urlIn && !file){alert("PDF URL or file required");return;}
 
-    showMsg("Saving...");
-
-    let finalUrl = urlIn;
-    let filePath = null;
+    let finalUrl=urlIn,filePath=null;
 
     if(file){
-      filePath = "answer_keys/" + Date.now() + "_" + file.name;
-      const { error } = await sb.storage.from("exam_files").upload(filePath, file);
-      if(error){ showMsg(error.message,"#ff8080"); return; }
-
-      const { data: pub } = sb.storage.from("exam_files").getPublicUrl(filePath);
-      if(pub?.publicUrl) finalUrl = pub.publicUrl;
+      filePath="answer_keys/"+Date.now()+"_"+file.name;
+      await sb.storage.from("exam_files").upload(filePath,file);
+      finalUrl=sb.storage.from("exam_files").getPublicUrl(filePath).data.publicUrl;
     }
 
-    const { error } = await sb.from("answer_keys").insert({
-      exam_name: title,
-      exam_date: date || null,
-      public_url: finalUrl,
-      file_path: filePath,
-      visible: true
+    await sb.from("answer_keys").insert({
+      exam_name:title,
+      exam_date:date||null,
+      public_url:finalUrl,
+      file_path:filePath,
+      visible:true
     });
 
-    if(error){ showMsg(error.message,"#ff8080"); return; }
-
-    showMsg("Saved successfully!","#7CFC00");
-    akTitle.value = akDate.value = akUrl.value = akFile.value = "";
-    loadAnswerKeys();
-  }
-
-  async function setVisibility(id,v){
-    await sb.from("answer_keys").update({visible:!v}).eq("id",id);
-    loadAnswerKeys();
-  }
-
-  async function deleteKey(id){
-    if(!confirm("Delete this answer key?")) return;
-    await sb.from("answer_keys").delete().eq("id",id);
+    showMsg("Saved successfully","#7CFC00");
+    akTitle.value=akDate.value=akUrl.value=akFile.value="";
     loadAnswerKeys();
   }
 
   async function loadAnswerKeys(){
-    const body = akTableBody;
-    body.innerHTML = "<tr><td colspan='6' style='text-align:center;'>Loading...</td></tr>";
-
-    const { data } = await sb.from("answer_keys").select("*").order("id",{ascending:false});
-    if(!data || !data.length){
-      body.innerHTML="<tr><td colspan='6' style='text-align:center;'>No data</td></tr>";
-      return;
-    }
-
-    body.innerHTML="";
+    const {data}=await sb.from("answer_keys").select("*").order("id",{ascending:false});
+    akTableBody.innerHTML="";
     let i=1;
-    data.forEach(r=>{
-      body.innerHTML+=`
-        <tr>
-          <td>${i++}</td>
-          <td>${r.exam_name||"-"}</td>
-          <td>${r.exam_date||"-"}</td>
-          <td>${r.visible!==false?"Visible":"Hidden"}</td>
-          <td>${r.public_url?`<a href="${r.public_url}" target="_blank" style="color:#ffd65a;">Open</a>`:"-"}</td>
-          <td>
-            <button class="btn-small ${r.visible?'btn-hide':'btn-visible'}"
-              onclick="setVisibility(${r.id},${r.visible!==false})">
-              ${r.visible?'Hide':'Show'}
-            </button>
-            <button class="btn-small btn-delete" onclick="deleteKey(${r.id})">Delete</button>
-          </td>
-        </tr>`;
+    (data||[]).forEach(r=>{
+      akTableBody.innerHTML+=`
+      <tr>
+        <td>${i++}</td>
+        <td>${r.exam_name||"-"}</td>
+        <td>${r.exam_date||"-"}</td>
+        <td>${r.visible!==false?"Visible":"Hidden"}</td>
+        <td>${r.public_url?`<a href="${r.public_url}" target="_blank" style="color:#ffd65a;">Open</a>`:"-"}</td>
+        <td>
+          <button class="btn-small ${r.visible?'btn-hide':'btn-visible'}"
+            onclick="sb.from('answer_keys').update({visible:${!r.visible}}).eq('id',${r.id}).then(loadAnswerKeys)">
+            ${r.visible?'Hide':'Show'}
+          </button>
+          <button class="btn-small btn-delete"
+            onclick="sb.from('answer_keys').delete().eq('id',${r.id}).then(loadAnswerKeys)">
+            Delete
+          </button>
+        </td>
+      </tr>`;
     });
   }
-
   loadAnswerKeys();
 </script>
 
