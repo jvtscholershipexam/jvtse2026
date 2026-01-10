@@ -19,10 +19,7 @@ body{
   border-radius:10px;
   border:2px solid #0b4d2b
 }
-h1{
-  color:#0b4d2b;
-  margin-bottom:10px
-}
+h1{color:#0b4d2b;margin-bottom:10px}
 table{
   width:100%;
   border-collapse:collapse;
@@ -31,11 +28,8 @@ table{
 th,td{
   border:1px solid #cfded2;
   padding:6px;
-  text-align:left
 }
-th{
-  background:#e8f5ec
-}
+th{background:#e8f5ec}
 button{
   padding:5px 8px;
   border:none;
@@ -55,24 +49,12 @@ button{
   padding-top:8px
 }
 label{font-size:13px}
-input{
-  width:100%;
-  padding:5px;
-  margin-top:2px
-}
-.msg{
-  font-size:13px;
-  margin-top:6px
-}
-a{
-  color:#0b4d2b;
-  font-weight:bold;
-  text-decoration:none
-}
+input{width:100%;padding:5px;margin-top:2px}
+.msg{font-size:13px;margin-top:6px}
+a{color:#0b4d2b;font-weight:bold;text-decoration:none}
 </style>
 
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 </head>
 
 <body>
@@ -81,7 +63,6 @@ a{
 <a href="dashboard.html">← Admin Home</a>
 <h1>Student Applications – 2026 Jai Veer Tejaji Club</h1>
 
-<button onclick="downloadExcel()">⬇ Download Excel</button>
 <p id="listMsg">Loading...</p>
 
 <table>
@@ -154,7 +135,7 @@ Payment Screenshot: <a id="dPSS" target="_blank">Not uploaded</a>
 </div>
 
 <script>
-/* ================= SUPABASE (FIXED) ================= */
+/* ================= SUPABASE ================= */
 const sb = supabase.createClient(
  "https://iqcbgiwycbuyvpxegmfg.supabase.co",
  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlxY2JnaXd5Y2J1eXZweGVnbWZnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc5NDQ4MDYsImV4cCI6MjA4MzUyMDgwNn0.WfFbOZw2ZRRX9bWxQ0HMUqskAfIL4MvoyAENFPPatjM"
@@ -200,6 +181,7 @@ async function load(){
   tr.querySelector(".view").onclick=()=>openDetail(s);
   tr.querySelector(".edit").onclick=()=>editName(s.id,s.full_name);
   tr.querySelector(".del").onclick=()=>delRow(s.id);
+
   tbody.appendChild(tr);
  });
 
@@ -207,9 +189,89 @@ async function load(){
 }
 load();
 
-/* बाकी code 100% SAME है — कोई बदलाव नहीं */
+/* ================= BUTTON FUNCTIONS ================= */
+
+function openDetail(s){
+ currentId = s.id;
+ detailBox.style.display="block";
+
+ dName.innerText=s.full_name||"";
+ dFather.innerText=s.father_name||"";
+ dMobile.innerText=s.mobile||"";
+ dRoll.innerText=s.roll_number||"";
+ dLevel.innerText=s.exam_level||"";
+ dStatus.innerText=s.form_status||"";
+ dPayment.innerText=s.payment_status||"";
+
+ setLink(dPhoto,s.photo_path);
+ setLink(dAF,s.aadhar_front_path);
+ setLink(dAB,s.aadhar_back_path);
+ setLink(dMS,s.marksheet_path);
+ setLink(dPSS,s.payment_screenshot_path);
+}
+
+function setLink(el,path){
+ const url = pub(path);
+ if(url){
+  el.href=url;
+  el.textContent="Open";
+ }else{
+  el.removeAttribute("href");
+  el.textContent="Not uploaded";
+ }
+}
+
+async function editName(id,oldName){
+ const newName = prompt("Enter correct full name",oldName||"");
+ if(!newName) return;
+
+ await sb.from("students")
+  .update({full_name:newName})
+  .eq("id",id);
+
+ alert("Name updated");
+ load();
+}
+
+async function delRow(id){
+ if(!confirm("Delete permanently?")) return;
+ await sb.from("students").delete().eq("id",id);
+ alert("Deleted");
+ load();
+}
+
+async function setStatus(status,pay){
+ if(!currentId) return alert("Click VIEW first");
+ await sb.from("students").update({
+  form_status:status,
+  payment_status: pay ? "approved" : "pending"
+ }).eq("id",currentId);
+ alert("Status updated");
+ load();
+}
+
+async function saveAdmit(){
+ await sb.from("students").update({
+  exam_center:cCentre.value,
+  exam_date:cDate.value,
+  exam_shift:cShift.value,
+  exam_start_time:cStart.value,
+  exam_end_time:cEnd.value,
+  admit_allowed:cAllow.checked
+ }).eq("id",currentId);
+ dMsg.innerText="Admit saved";
+}
+
+async function saveResult(){
+ await sb.from("students").update({
+  marks:rMarks.value||null,
+  rank:rRank.value||null,
+  result_status:rStatus.value||null,
+  result_published:rPub.checked
+ }).eq("id",currentId);
+ dMsg.innerText="Result saved";
+}
 </script>
 
 </body>
 </html>
-
