@@ -175,9 +175,10 @@ Pay ₹51 via UPI
 <footer>© 2026 Jai Veer Tejaji Club</footer>
 
 <script>
+/* 🔑 ONLY API KEY CHANGED */
 const sb = supabase.createClient(
   "https://iqcbgiwycbuyvxpegmfg.supabase.co",
-  "sb_publishable_BCvr1Fx0v1JgAWVE90ittw_bThpVl8C"
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlxY2JnaXd5Y2J1eXZweGVnbWZnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc5NDQ4MDYsImV4cCI6MjA4MzUyMDgwNn0.WfFbOZw2ZRRX9bWxQ0HMUqskAfIL4MvoyAENFPPatjM"
 );
 
 async function submitForm(e){
@@ -215,7 +216,6 @@ async function submitForm(e){
     return;
   }
 
-  /* Roll number: JVTS26001 */
   const roll = "JVTS26" + String(data.id).padStart(3,"0");
   const base = roll + "/";
 
