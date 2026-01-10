@@ -122,9 +122,10 @@
   <script>
     const { createClient } = supabase;
 
-    // ✅ NEW SUPABASE
+    // ✅ SUPABASE (ONLY KEY CHANGED)
     const SUPABASE_URL = "https://iqcbgiwycbuyvxpegmfg.supabase.co";
-    const SUPABASE_KEY = "sb_publishable_BCvr1Fx0v1JgAWVE90ittw_bThpVl8C";
+    const SUPABASE_KEY =
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlxY2JnaXd5Y2J1eXZweGVnbWZnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc5NDQ4MDYsImV4cCI6MjA4MzUyMDgwNn0.WfFbOZw2ZRRX9bWxQ0HMUqskAfIL4MvoyAENFPPatjM";
 
     const db = createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -171,50 +172,45 @@
       submitBtn.disabled = true;
       msgEl.textContent = "Please wait, registering...";
 
-      try {
-        const { data: existing } = await db
-          .from("students")
-          .select("id")
-          .eq("mobile", mobile)
-          .maybeSingle();
+      const { data: existing } = await db
+        .from("students")
+        .select("id")
+        .eq("mobile", mobile)
+        .maybeSingle();
 
-        if (existing) {
-          msgEl.textContent = "Ye mobile number already registered hai. Login karein.";
-          msgEl.style.color = "#ff8080";
-          submitBtn.disabled = false;
-          return;
-        }
-
-        const { error } = await db
-          .from("students")
-          .insert({
-            full_name: name,
-            father_name: fatherName,
-            mobile: mobile,
-            email: email || null,
-            login_password: password,
-            form_status: "not_applied",
-            payment_status: "pending"
-          });
-
-        if (error) throw error;
-
-        localStorage.setItem("student_mobile", mobile);
-        localStorage.setItem("studentId", mobile);
-
-        msgEl.textContent = "Registration successful!";
-        msgEl.style.color = "#7CFC00";
-
-        setTimeout(() => {
-          window.location.href = "dashboard.html";
-        }, 1200);
-
-      } catch (err) {
-        console.error(err);
-        msgEl.textContent = "Kuch error aayi, baad me try karein.";
+      if (existing) {
+        msgEl.textContent = "Ye mobile number already registered hai. Login karein.";
         msgEl.style.color = "#ff8080";
         submitBtn.disabled = false;
+        return;
       }
+
+      const { error } = await db.from("students").insert({
+        full_name: name,
+        father_name: fatherName,
+        mobile: mobile,
+        email: email || null,
+        login_password: password,
+        form_status: "not_applied",
+        payment_status: "pending"
+      });
+
+      if (error) {
+        msgEl.textContent = error.message;
+        msgEl.style.color = "#ff8080";
+        submitBtn.disabled = false;
+        return;
+      }
+
+      localStorage.setItem("student_mobile", mobile);
+      localStorage.setItem("studentId", mobile);
+
+      msgEl.textContent = "Registration successful!";
+      msgEl.style.color = "#7CFC00";
+
+      setTimeout(() => {
+        window.location.href = "dashboard.html";
+      }, 1200);
     });
   </script>
 
