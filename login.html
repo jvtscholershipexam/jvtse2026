@@ -108,10 +108,10 @@
   </div>
 
   <script>
-    // ✅ Supabase config (NEW PROJECT)
+    // ✅ Supabase config (ONLY KEY CHANGED)
     const SUPABASE_URL = "https://iqcbgiwycbuyvxpegmfg.supabase.co";
     const SUPABASE_ANON_KEY =
-      "sb_publishable_BCvr1Fx0v1JgAWVE90ittw_bThpVl8C";
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlxY2JnaXd5Y2J1eXZweGVnbWZnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc5NDQ4MDYsImV4cCI6MjA4MzUyMDgwNn0.WfFbOZw2ZRRX9bWxQ0HMUqskAfIL4MvoyAENFPPatjM";
 
     const { createClient } = supabase;
     const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -143,44 +143,35 @@
       loginBtn.disabled = true;
       msgEl.textContent = "Checking...";
 
-      try {
-        const { data, error } = await sb
-          .from("students")
-          .select("id, mobile, login_password")
-          .eq("mobile", mobile)
-          .maybeSingle();
+      const { data, error } = await sb
+        .from("students")
+        .select("id, mobile, login_password")
+        .eq("mobile", mobile)
+        .maybeSingle();
 
-        if (error || !data) {
-          msgEl.textContent = "Mobile number registered nahi hai.";
-          msgEl.style.color = "#ff8080";
-          loginBtn.disabled = false;
-          return;
-        }
-
-        if (!data.login_password || data.login_password !== password) {
-          msgEl.textContent = "Galat password.";
-          msgEl.style.color = "#ff8080";
-          loginBtn.disabled = false;
-          return;
-        }
-
-        // ✅ success
-        localStorage.setItem("student_mobile", mobile);
-        localStorage.setItem("studentId", mobile);
-
-        msgEl.textContent = "Login successful!";
-        msgEl.style.color = "#7CFC00";
-
-        setTimeout(() => {
-          window.location.href = "dashboard.html";
-        }, 800);
-
-      } catch (err) {
-        console.error(err);
-        msgEl.textContent = "Kuch error aayi, baad me try karein.";
+      if (error || !data) {
+        msgEl.textContent = "Mobile number registered nahi hai.";
         msgEl.style.color = "#ff8080";
         loginBtn.disabled = false;
+        return;
       }
+
+      if (data.login_password !== password) {
+        msgEl.textContent = "Galat password.";
+        msgEl.style.color = "#ff8080";
+        loginBtn.disabled = false;
+        return;
+      }
+
+      localStorage.setItem("student_mobile", mobile);
+      localStorage.setItem("studentId", mobile);
+
+      msgEl.textContent = "Login successful!";
+      msgEl.style.color = "#7CFC00";
+
+      setTimeout(() => {
+        window.location.href = "dashboard.html";
+      }, 800);
     });
   </script>
 
