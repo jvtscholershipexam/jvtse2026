@@ -90,9 +90,10 @@
   <footer>© 2026 Jai Veer Tejaji Club</footer>
 
   <script>
-    /* 🔗 Supabase (NEW) */
+    /* 🔑 ONLY API KEY CHANGED */
     const SUPABASE_URL = "https://iqcbgiwycbuyvxpegmfg.supabase.co";
-    const SUPABASE_ANON_KEY = "sb_publishable_BCvr1Fx0v1JgAWVE90ittw_bThpVl8C";
+    const SUPABASE_ANON_KEY =
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlxY2JnaXd5Y2J1eXZweGVnbWZnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc5NDQ4MDYsImV4cCI6MjA4MzUyMDgwNn0.WfFbOZw2ZRRX9bWxQ0HMUqskAfIL4MvoyAENFPPatjM";
 
     const supabase = window.supabase.createClient(
       SUPABASE_URL,
@@ -113,7 +114,8 @@
 
       if(error){
         console.error(error);
-        statusEl.textContent = "Gallery load nahi ho rahi. Thodi der baad try karein.";
+        statusEl.textContent =
+          "Gallery load nahi ho rahi. Thodi der baad try karein.";
         return;
       }
 
