@@ -107,87 +107,89 @@ input[type="file"]{
 <!-- Supabase JS -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.48.0/dist/umd/supabase.min.js"></script>
 <script>
-  // 🔐 Admin guard
-  if (localStorage.getItem("bdsAdminLoggedIn") !== "yes") {
-    window.location.href = "login.html";
+/* ================= ADMIN GUARD ================= */
+if (localStorage.getItem("bdsAdminLoggedIn") !== "yes") {
+  window.location.href = "login.html";
+}
+
+/* ================= SUPABASE CONFIG (FIXED) ================= */
+const SUPABASE_URL = "https://iqcbgiwycbuyvxpegmfg.supabase.co";
+const SUPABASE_ANON_KEY =
+"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlxY2JnaXd5Y2J1eXZweGVnbWZnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc5NDQ4MDYsImV4cCI6MjA4MzUyMDgwNn0.WfFbOZw2ZRRX9bWxQ0HMUqskAfIL4MvoyAENFPPatjM";
+
+const supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_ANON_KEY
+);
+
+/* ================= ELEMENTS ================= */
+const fileInput = document.getElementById("posterFile");
+const uploadBtn = document.getElementById("uploadBtn");
+const msgBox    = document.getElementById("msgBox");
+const preview   = document.getElementById("posterPreview");
+
+function showMsg(text,color){
+  msgBox.style.color = color || "#fff";
+  msgBox.innerHTML = text;
+}
+
+/* ================= LOAD CURRENT POSTER ================= */
+async function loadCurrentPoster(){
+  const { data, error } = await supabaseClient
+    .from("flex_banners")
+    .select("image_url")
+    .order("created_at",{ascending:false})
+    .limit(1)
+    .maybeSingle();
+
+  if(data && data.image_url){
+    preview.src = data.image_url;
+  }
+}
+loadCurrentPoster();
+
+/* ================= UPLOAD POSTER ================= */
+uploadBtn.addEventListener("click", async ()=>{
+  const file = fileInput.files[0];
+  if(!file){
+    showMsg("Please select an image file.","#ff8080");
+    return;
   }
 
-  // 🔗 Supabase (NEW PROJECT)
-  const SUPABASE_URL = "https://iqcbgiwycbuyvxpegmfg.supabase.co";
-  const SUPABASE_KEY = "sb_publishable_BCvr1Fx0v1JgAWVE90ittw_bThpVl8C";
+  uploadBtn.disabled = true;
+  showMsg("Uploading poster, please wait...");
 
-  const supabaseClient = window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-  );
+  try{
+    const filePath = Date.now()+"_"+file.name.replace(/\s+/g,"");
 
-  const fileInput = document.getElementById("posterFile");
-  const uploadBtn = document.getElementById("uploadBtn");
-  const msgBox    = document.getElementById("msgBox");
-  const preview   = document.getElementById("posterPreview");
+    const { error: upErr } = await supabaseClient
+      .storage
+      .from("flex")
+      .upload(filePath, file, { upsert:true });
 
-  function showMsg(text,color){
-    msgBox.style.color = color || "#fff";
-    msgBox.innerHTML = text;
-  }
+    if(upErr) throw upErr;
 
-  // 🔄 Load latest poster
-  async function loadCurrentPoster(){
-    const { data, error } = await supabaseClient
+    const { data: pub } = supabaseClient
+      .storage
+      .from("flex")
+      .getPublicUrl(filePath);
+
+    const { error: insErr } = await supabaseClient
       .from("flex_banners")
-      .select("image_url")
-      .order("created_at",{ascending:false})
-      .limit(1)
-      .maybeSingle();
+      .insert({ image_url: pub.publicUrl });
 
-    if(data && data.image_url){
-      preview.src = data.image_url;
-    }
+    if(insErr) throw insErr;
+
+    preview.src = pub.publicUrl;
+    showMsg("Poster successfully updated!","#7CFC00");
+    fileInput.value="";
+
+  }catch(err){
+    showMsg("Error: "+err.message,"#ff8080");
+  }finally{
+    uploadBtn.disabled = false;
   }
-  loadCurrentPoster();
-
-  // 📤 Upload poster
-  uploadBtn.addEventListener("click", async ()=>{
-    const file = fileInput.files[0];
-    if(!file){
-      showMsg("Please select an image file.","#ff8080");
-      return;
-    }
-
-    uploadBtn.disabled = true;
-    showMsg("Uploading poster, please wait...");
-
-    try{
-      const filePath = Date.now()+"_"+file.name.replace(/\s+/g,"");
-
-      const { error: upErr } = await supabaseClient
-        .storage
-        .from("flex")
-        .upload(filePath, file, { upsert:true });
-
-      if(upErr) throw upErr;
-
-      const { data: pub } = supabaseClient
-        .storage
-        .from("flex")
-        .getPublicUrl(filePath);
-
-      const { error: insErr } = await supabaseClient
-        .from("flex_banners")
-        .insert({ image_url: pub.publicUrl });
-
-      if(insErr) throw insErr;
-
-      preview.src = pub.publicUrl;
-      showMsg("Poster successfully updated!","#7CFC00");
-      fileInput.value="";
-
-    }catch(err){
-      showMsg("Error: "+err.message,"#ff8080");
-    }finally{
-      uploadBtn.disabled = false;
-    }
-  });
+});
 </script>
 
 </body>
