@@ -25,7 +25,9 @@
       font-size:18px;
       color:#ffd65a;
     }
-    header img{height:36px;}
+    header img{
+      height:36px;
+    }
 
     nav{
       text-align:center;
@@ -77,6 +79,7 @@
       border-radius:8px;
       margin-bottom:8px;
       border-left:4px solid #d4af37;
+      font-size:14px;
     }
 
     .gallery{
@@ -104,7 +107,8 @@
 <body>
 
 <header>
-  <img src="logo.png" onerror="this.style.display='none'">
+  <!-- ✅ FIXED LOGO PATH -->
+  <img src="bds-logo.png" alt="Logo">
   2026 JAI VEER TEJAJI CLUB
 </header>
 
@@ -126,7 +130,7 @@
     <p>Show your talent & win exciting prizes.</p>
   </div>
   <div class="right">
-    <img id="heroPoster" class="poster" src="flex.jpg">
+    <img class="poster" src="flex.jpg" alt="Poster">
   </div>
 </div>
 
@@ -151,23 +155,38 @@
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlxY2JnaXd5Y2J1eXZweGVnbWZnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc5NDQ4MDYsImV4cCI6MjA4MzUyMDgwNn0.WfFbOZw2ZRRX9bWxQ0HMUqskAfIL4MvoyAENFPPatjM"
   );
 
-  // 🔔 Load Notices
-  sb.from("notices").select("*").eq("active",true)
-    .order("created_at",{ascending:false})
-    .then(({data})=>{
-      const box=document.getElementById("noticeBox");
-      if(!data || !data.length){box.innerHTML="No notices";return;}
-      box.innerHTML=data.map(n=>`<div class="notice">${n.title}</div>`).join("");
+  /* 🔔 Load Notices */
+  sb.from("notices")
+    .select("title")
+    .eq("active", true)
+    .order("created_at", { ascending:false })
+    .then(({ data })=>{
+      const box = document.getElementById("noticeBox");
+      if(!data || data.length === 0){
+        box.innerHTML = "No notices available.";
+        return;
+      }
+      box.innerHTML = data
+        .map(n => `<div class="notice">${n.title}</div>`)
+        .join("");
     });
 
-  // 🖼 Load Gallery
-  sb.from("gallery_items").select("*").eq("visible",true).limit(6)
-    .then(({data})=>{
-      const g=document.getElementById("galleryBox");
-      if(!data)return;
+  /* 🖼 Load Gallery */
+  sb.from("gallery_items")
+    .select("public_url")
+    .eq("visible", true)
+    .order("created_at",{ascending:false})
+    .limit(6)
+    .then(({ data })=>{
+      const g = document.getElementById("galleryBox");
+      if(!data || data.length === 0){
+        g.innerHTML = "<div>No photos yet.</div>";
+        return;
+      }
       data.forEach(i=>{
-        const img=document.createElement("img");
-        img.src=i.public_url;
+        if(!i.public_url) return;
+        const img = document.createElement("img");
+        img.src = i.public_url;
         g.appendChild(img);
       });
     });
