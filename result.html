@@ -136,9 +136,10 @@
 <footer>© 2026 Jai Veer Tejaji Club</footer>
 
 <script>
+  /* ✅ CORRECT SUPABASE ANON KEY */
   const sb = supabase.createClient(
     "https://iqcbgiwycbuyvxpegmfg.supabase.co",
-    "sb_publishable_BCvr1Fx0v1JgAWVE90ittw_bThpVl8C"
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlxY2JnaXd5Y2J1eXZweGVnbWZnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc5NDQ4MDYsImV4cCI6MjA4MzUyMDgwNn0.WfFbOZw2ZRRX9bWxQ0HMUqskAfIL4MvoyAENFPPatjM"
   );
 
   function showMsg(text, color){
@@ -163,54 +164,48 @@
     btn.disabled = true;
     showMsg("Please wait, record search ho raha hai...");
 
-    try{
-      const { data: stu, error } = await sb
-        .from("students")
-        .select("full_name,father_name,roll_number,dob,payment_status,result_published,marks,rank,result_status")
-        .eq("roll_number", roll)
-        .maybeSingle();
+    const { data: stu, error } = await sb
+      .from("students")
+      .select("full_name,father_name,roll_number,dob,payment_status,result_published,marks,rank,result_status")
+      .eq("roll_number", roll)
+      .maybeSingle();
 
-      if(error || !stu){
-        showMsg("Record nahi mila. Roll number check karein.","#ff8080");
-        btn.disabled = false;
-        return;
-      }
-
-      if(stu.dob !== dob){
-        showMsg("DOB match nahi ho rahi.","#ff8080");
-        btn.disabled = false;
-        return;
-      }
-
-      if(stu.payment_status !== "approved"){
-        showMsg("Payment verify hone ke baad hi result dikhaya jayega.","#ffcc66");
-        btn.disabled = false;
-        return;
-      }
-
-      if(stu.result_published !== true){
-        showMsg("Result abhi publish nahi hua hai.","#ffcc66");
-        btn.disabled = false;
-        return;
-      }
-
-      document.getElementById("resultBox").innerHTML = `
-        <div class="result-row"><span class="label">Name:</span><span>${stu.full_name||""}</span></div>
-        <div class="result-row"><span class="label">Roll No:</span><span>${stu.roll_number||""}</span></div>
-        <div class="result-row"><span class="label">Father Name:</span><span>${stu.father_name||""}</span></div>
-        <div class="result-row"><span class="label">Marks:</span><span>${stu.marks ?? "-"}</span></div>
-        <div class="result-row"><span class="label">Rank:</span><span>${stu.rank ?? "-"}</span></div>
-        <div class="result-row"><span class="label">Status:</span><span>${stu.result_status || "RESULT UPDATED"}</span></div>
-      `;
-
-      document.getElementById("resultArea").style.display = "block";
-      showMsg("Result successfully loaded.","#7CFC00");
+    if(error || !stu){
+      showMsg("Record nahi mila.","#ff8080");
       btn.disabled = false;
-
-    }catch(err){
-      showMsg("Error: "+err.message,"#ff8080");
-      btn.disabled = false;
+      return;
     }
+
+    if(stu.dob !== dob){
+      showMsg("DOB match nahi ho rahi.","#ff8080");
+      btn.disabled = false;
+      return;
+    }
+
+    if(stu.payment_status !== "approved"){
+      showMsg("Payment verify hone ke baad hi result dikhaya jayega.","#ffcc66");
+      btn.disabled = false;
+      return;
+    }
+
+    if(stu.result_published !== true){
+      showMsg("Result abhi publish nahi hua hai.","#ffcc66");
+      btn.disabled = false;
+      return;
+    }
+
+    document.getElementById("resultBox").innerHTML = `
+      <div class="result-row"><span class="label">Name:</span><span>${stu.full_name}</span></div>
+      <div class="result-row"><span class="label">Roll No:</span><span>${stu.roll_number}</span></div>
+      <div class="result-row"><span class="label">Father Name:</span><span>${stu.father_name}</span></div>
+      <div class="result-row"><span class="label">Marks:</span><span>${stu.marks ?? "-"}</span></div>
+      <div class="result-row"><span class="label">Rank:</span><span>${stu.rank ?? "-"}</span></div>
+      <div class="result-row"><span class="label">Status:</span><span>${stu.result_status || "RESULT UPDATED"}</span></div>
+    `;
+
+    document.getElementById("resultArea").style.display = "block";
+    showMsg("Result successfully loaded.","#7CFC00");
+    btn.disabled = false;
   }
 
   document.getElementById("btnGet").addEventListener("click", getResult);
