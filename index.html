@@ -1,113 +1,127 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>2026 Jai Veer Tejaji Club | Home</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<title>2026 Jai Veer Tejaji Club | Home</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <style>
-    *{box-sizing:border-box;margin:0;padding:0;}
-    body{
-      font-family: Arial, sans-serif;
-      background: radial-gradient(circle at top, #0b4d2b, #032015);
-      color:#fff;
-    }
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  font-family:Arial, sans-serif;
+  background:radial-gradient(circle at top,#0b4d2b,#032015);
+  color:#fff;
+}
 
-    header{
-      background:rgba(0,0,0,0.75);
-      padding:10px 15px;
-      border-bottom:2px solid #d4af37;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      gap:10px;
-      font-weight:900;
-      font-size:18px;
-      color:#ffd65a;
-    }
-    header img{
-      height:36px;
-    }
+header{
+  background:rgba(0,0,0,.75);
+  padding:10px 15px;
+  border-bottom:2px solid #d4af37;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  font-weight:900;
+  font-size:18px;
+  color:#ffd65a;
+}
+header img{height:36px}
 
-    nav{
-      text-align:center;
-      background:rgba(0,0,0,0.55);
-      padding:8px 0;
-      display:flex;
-      flex-wrap:wrap;
-      justify-content:center;
-      gap:10px;
-    }
-    nav a{
-      color:#ffeb99;
-      text-decoration:none;
-      font-size:13px;
-      font-weight:bold;
-    }
+nav{
+  background:rgba(0,0,0,.55);
+  padding:8px 0;
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:10px;
+}
+nav a{
+  color:#ffeb99;
+  text-decoration:none;
+  font-size:13px;
+  font-weight:bold;
+}
 
-    .main{
-      max-width:1000px;
-      margin:15px auto;
-      padding:0 10px;
-      display:flex;
-      flex-wrap:wrap;
-      gap:15px;
-    }
-    .left{flex:1}
-    .right{flex:1;text-align:center}
+.main{
+  max-width:1000px;
+  margin:20px auto;
+  padding:0 10px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:20px;
+}
 
-    .poster{
-      max-width:380px;
-      width:100%;
-      border-radius:12px;
-      border:2px solid #d4af37;
-    }
+.left{flex:1}
+.right{flex:1;text-align:center}
 
-    .section{
-      margin:25px auto;
-      max-width:1000px;
-      padding:0 10px;
-    }
-    .section h2{
-      color:#ffd65a;
-      margin-bottom:10px;
-    }
+.poster{
+  max-width:380px;
+  width:100%;
+  border-radius:12px;
+  border:2px solid #d4af37;
+}
 
-    .notice{
-      background:#021b12;
-      padding:10px;
-      border-radius:8px;
-      margin-bottom:8px;
-      border-left:4px solid #d4af37;
-      font-size:14px;
-    }
+.btn{
+  display:inline-block;
+  background:#d4af37;
+  color:#000;
+  padding:10px 22px;
+  border-radius:25px;
+  font-weight:bold;
+  margin:10px 8px 0 0;
+  text-decoration:none;
+}
+.btn:hover{background:#ffe08a}
 
-    .gallery{
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
-    }
-    .gallery img{
-      width:150px;
-      height:150px;
-      object-fit:cover;
-      border-radius:8px;
-      border:1px solid #d4af37;
-    }
+.section{
+  max-width:1000px;
+  margin:30px auto;
+  padding:0 10px;
+}
+.section h2{
+  color:#ffd65a;
+  margin-bottom:12px;
+}
 
-    footer{
-      background:#000c;
-      text-align:center;
-      font-size:11px;
-      padding:10px;
-      color:#ddd;
-    }
-  </style>
+.prize-list li{
+  margin-bottom:6px;
+  font-size:15px;
+}
+
+.notice{
+  background:#021b12;
+  padding:10px;
+  border-radius:8px;
+  margin-bottom:8px;
+  border-left:4px solid #d4af37;
+}
+
+.gallery{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+}
+.gallery img{
+  width:150px;
+  height:150px;
+  object-fit:cover;
+  border-radius:8px;
+  border:1px solid #d4af37;
+}
+
+footer{
+  background:#000c;
+  text-align:center;
+  font-size:11px;
+  padding:10px;
+  color:#ddd;
+}
+</style>
 </head>
+
 <body>
 
 <header>
-  <!-- ✅ FIXED LOGO PATH -->
   <img src="bds-logo.png" alt="Logo">
   2026 JAI VEER TEJAJI CLUB
 </header>
@@ -124,14 +138,36 @@
   <a href="admin/login.html">ADMIN</a>
 </nav>
 
+<!-- HERO -->
 <div class="main">
   <div class="left">
     <h1>Jai Veer Tejaji Scholarship Exam 2026</h1>
     <p>Show your talent & win exciting prizes.</p>
+
+    <!-- ✅ APPLY + SYLLABUS -->
+    <a class="btn" href="apply.html">Apply Now</a>
+    <a class="btn" href="syllabus.pdf" target="_blank">State Syllabus</a>
+    <a class="btn" href="centre-syllabus.pdf" target="_blank">Centre Syllabus</a>
   </div>
+
   <div class="right">
-    <img class="poster" src="flex.jpg" alt="Poster">
+    <img class="poster" src="flex.jpg">
+    <br>
+    <!-- ✅ SECOND APPLY -->
+    <a class="btn" href="apply.html">Apply Now</a>
   </div>
+</div>
+
+<!-- 🏆 PRIZE LIST -->
+<div class="section">
+  <h2>🏆 Prize List</h2>
+  <ul class="prize-list">
+    <li>🥇 1st Prize – ₹7,100</li>
+    <li>🥈 2nd Prize – ₹5,100</li>
+    <li>🥉 3rd Prize – ₹2,100</li>
+    <li>4th to 40th Rank – ₹1,100</li>
+    <li>First 500 Students – Certificate</li>
+  </ul>
 </div>
 
 <!-- 🔔 NOTICES -->
@@ -150,46 +186,31 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-  const sb = supabase.createClient(
-    "https://iqcbgiwycbuyvxpegmfg.supabase.co",
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlxY2JnaXd5Y2J1eXZweGVnbWZnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc5NDQ4MDYsImV4cCI6MjA4MzUyMDgwNn0.WfFbOZw2ZRRX9bWxQ0HMUqskAfIL4MvoyAENFPPatjM"
-  );
+const sb = supabase.createClient(
+  "https://iqcbgiwycbuyvxpegmfg.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlxY2JnaXd5Y2J1eXZweGVnbWZnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc5NDQ4MDYsImV4cCI6MjA4MzUyMDgwNn0.WfFbOZw2ZRRX9bWxQ0HMUqskAfIL4MvoyAENFPPatjM"
+);
 
-  /* 🔔 Load Notices */
-  sb.from("notices")
-    .select("title")
-    .eq("active", true)
-    .order("created_at", { ascending:false })
-    .then(({ data })=>{
-      const box = document.getElementById("noticeBox");
-      if(!data || data.length === 0){
-        box.innerHTML = "No notices available.";
-        return;
-      }
-      box.innerHTML = data
-        .map(n => `<div class="notice">${n.title}</div>`)
-        .join("");
-    });
+// Notices
+sb.from("notices").select("title").eq("active",true)
+.then(({data})=>{
+  const box=document.getElementById("noticeBox");
+  if(!data || !data.length){box.innerHTML="No notices available.";return;}
+  box.innerHTML=data.map(n=>`<div class="notice">${n.title}</div>`).join("");
+});
 
-  /* 🖼 Load Gallery */
-  sb.from("gallery_items")
-    .select("public_url")
-    .eq("visible", true)
-    .order("created_at",{ascending:false})
-    .limit(6)
-    .then(({ data })=>{
-      const g = document.getElementById("galleryBox");
-      if(!data || data.length === 0){
-        g.innerHTML = "<div>No photos yet.</div>";
-        return;
-      }
-      data.forEach(i=>{
-        if(!i.public_url) return;
-        const img = document.createElement("img");
-        img.src = i.public_url;
-        g.appendChild(img);
-      });
-    });
+// Gallery
+sb.from("gallery_items").select("public_url").eq("visible",true).limit(6)
+.then(({data})=>{
+  const g=document.getElementById("galleryBox");
+  if(!data || !data.length){g.innerHTML="No photos yet.";return;}
+  data.forEach(i=>{
+    if(!i.public_url) return;
+    const img=document.createElement("img");
+    img.src=i.public_url;
+    g.appendChild(img);
+  });
+});
 </script>
 
 </body>
