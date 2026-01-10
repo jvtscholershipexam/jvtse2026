@@ -21,248 +21,131 @@
       box-shadow:0 0 12px #000;
       border:1px solid rgba(255,255,255,0.15);
     }
-    h1 {
-      margin-top:0;
-      color:#ffd65a;
-    }
-    label {
-      display:block;
-      margin-top:8px;
-      font-size:14px;
-    }
+    h1 { margin-top:0; color:#ffd65a; }
+    label { display:block; margin-top:8px; font-size:14px; }
     input[type="text"] {
-      width:100%;
-      padding:7px;
-      box-sizing:border-box;
-      border-radius:6px;
-      border:none;
-      margin-top:3px;
+      width:100%; padding:7px; border-radius:6px; border:none; margin-top:3px;
     }
-    input[type="file"] {
-      margin-top:5px;
-      color:#fff;
-    }
+    input[type="file"] { margin-top:5px; color:#fff; }
     button {
-      margin-top:12px;
-      padding:8px 16px;
-      border:none;
-      border-radius:999px;
-      background:#d4af37;
-      color:#000;
+      margin-top:12px; padding:8px 16px; border:none; border-radius:999px;
+      background:#d4af37; color:#000; font-size:14px; font-weight:bold;
       cursor:pointer;
-      font-size:14px;
-      font-weight:bold;
     }
-    button:disabled {
-      opacity:0.6;
-      cursor:not-allowed;
-    }
-    .msg {
-      margin-top:8px;
-      font-size:13px;
-    }
+    button:disabled { opacity:0.6; cursor:not-allowed; }
+    .msg { margin-top:8px; font-size:13px; }
     .preview-list {
-      margin-top:15px;
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
+      margin-top:15px; display:flex; flex-wrap:wrap; gap:10px;
     }
     .preview-item {
-      width:140px;
-      text-align:center;
-      font-size:12px;
+      width:140px; text-align:center; font-size:12px;
       border:1px solid rgba(255,255,255,0.2);
-      border-radius:8px;
-      padding:6px;
-      background:#001c12;
+      border-radius:8px; padding:6px; background:#001c12;
     }
     .preview-item img {
-      width:110px;
-      height:110px;
-      object-fit:cover;
-      border-radius:6px;
-      border:1px solid #d4af37;
+      width:110px; height:110px; object-fit:cover;
+      border-radius:6px; border:1px solid #d4af37;
     }
-    .topbar-links a {
-      margin-right:8px;
-      font-size:13px;
-      text-decoration:none;
-      color:#ffd65a;
-    }
-
     .btn-small {
-      margin-top:6px;
-      padding:4px 8px;
-      font-size:11px;
-      border-radius:6px;
-      border:none;
-      cursor:pointer;
+      margin-top:6px; padding:4px 8px; font-size:11px;
+      border-radius:6px; border:none; cursor:pointer;
     }
-    .btn-delete {
-      background:#c62828;
-      color:#fff;
+    .btn-delete { background:#c62828; color:#fff; }
+    .topbar-links a {
+      margin-right:8px; font-size:13px; text-decoration:none; color:#ffd65a;
     }
   </style>
 
-  <!-- Supabase JS -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.48.0/dist/umd/supabase.min.js"></script>
 </head>
 <body>
 
 <div class="container">
   <div class="topbar-links">
-    <a href="dashboard.html">← Admin Home</a>
-    <span>|</span>
-    <a href="../gallery.html" target="_blank">View Gallery Page</a>
+    <a href="dashboard.html">← Admin Home</a> |
+    <a href="../gallery.html" target="_blank">View Gallery</a>
   </div>
 
   <h1>Gallery Photo Upload</h1>
-  <p style="font-size:13px;color:#e6e6e6;">
-    Yahan upload ki gayi photos <b>gallery.html</b> par show hongi.<br>
-    Project: <b>2026 Jai Veer Tejaji Club</b>
-  </p>
 
   <label>Select Image File</label>
   <input type="file" id="photoFile" accept="image/*">
 
   <label>Caption (optional)</label>
-  <input type="text" id="captionInput" placeholder="Exam hall, Prize distribution...">
+  <input type="text" id="captionInput">
 
-  <label style="margin-top:10px;">
-    <input type="checkbox" id="visibleCheck" checked>
-    Visible in Gallery
+  <label>
+    <input type="checkbox" id="visibleCheck" checked> Visible in Gallery
   </label>
 
   <button id="uploadBtn">Upload to Gallery</button>
   <p class="msg" id="msgBox"></p>
 
-  <h3 style="margin-top:20px;color:#ffd65a;">Latest Uploaded Photos</h3>
+  <h3 style="color:#ffd65a">Latest Uploaded Photos</h3>
   <div id="previewList" class="preview-list"></div>
 </div>
 
 <script>
-  // 🔐 Admin login check
   if (localStorage.getItem("bdsAdminLoggedIn") !== "yes") {
     window.location.href = "login.html";
   }
 
-  // ✅ Supabase config (NEW PROJECT)
-  const SUPABASE_URL = "https://iqcbgiwycbuyvxpegmfg.supabase.co";
-  const SUPABASE_KEY = "sb_publishable_BCvr1Fx0v1JgAWVE90ittw_bThpVl8C";
-  const BUCKET_NAME  = "gallery";
+  const supabase = window.supabase.createClient(
+    "https://iqcbgiwycbuyvxpegmfg.supabase.co",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlxY2JnaXd5Y2J1eXZweGVnbWZnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc5NDQ4MDYsImV4cCI6MjA4MzUyMDgwNn0.WfFbOZw2ZRRX9bWxQ0HMUqskAfIL4MvoyAENFPPatjM"
+  );
 
-  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  const BUCKET = "gallery";
 
-  const photoFileInput = document.getElementById("photoFile");
-  const captionInput   = document.getElementById("captionInput");
-  const visibleCheck   = document.getElementById("visibleCheck");
-  const uploadBtn      = document.getElementById("uploadBtn");
-  const msgBox         = document.getElementById("msgBox");
-  const previewList    = document.getElementById("previewList");
+  uploadBtn.onclick = async () => {
+    const file = photoFile.files[0];
+    if(!file) return msgBox.innerText="Select image";
 
-  // ================== UPLOAD ==================
-  uploadBtn.addEventListener("click", async () => {
-    const file = photoFileInput.files[0];
-    const caption = captionInput.value.trim();
-    const visible = visibleCheck.checked;
+    uploadBtn.disabled=true;
+    msgBox.innerText="Uploading...";
 
-    if (!file) {
-      msgBox.style.color = "#ff8080";
-      msgBox.textContent = "Please select an image file.";
-      return;
-    }
+    const path = `gallery/${Date.now()}_${file.name}`;
+    const up = await supabase.storage.from(BUCKET).upload(path,file);
+    if(up.error){ msgBox.innerText=up.error.message; return; }
 
-    msgBox.style.color = "#fff";
-    msgBox.textContent = "Uploading photo, please wait...";
-    uploadBtn.disabled = true;
+    const pub = supabase.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;
 
-    try {
-      const filePath = `gallery/${Date.now()}_${file.name}`;
+    await supabase.from("gallery_items").insert({
+      file_path:path,
+      public_url:pub,
+      caption:captionInput.value||null,
+      visible:visibleCheck.checked
+    });
 
-      const { error: uploadError } = await supabase
-        .storage.from(BUCKET_NAME)
-        .upload(filePath, file);
+    msgBox.innerText="Uploaded successfully";
+    photoFile.value=""; captionInput.value="";
+    load();
+    uploadBtn.disabled=false;
+  };
 
-      if (uploadError) throw uploadError;
-
-      const { data: pub } = supabase
-        .storage.from(BUCKET_NAME)
-        .getPublicUrl(filePath);
-
-      const { error: insertError } = await supabase
-        .from("gallery_items")
-        .insert({
-          caption: caption || null,
-          file_path: filePath,
-          public_url: pub.publicUrl,
-          visible: visible
-        });
-
-      if (insertError) throw insertError;
-
-      msgBox.style.color = "#7CFC00";
-      msgBox.textContent = "Photo uploaded successfully!";
-
-      photoFileInput.value = "";
-      captionInput.value = "";
-      visibleCheck.checked = true;
-
-      loadLatestPhotos();
-
-    } catch (err) {
-      msgBox.style.color = "#ff8080";
-      msgBox.textContent = "Error: " + err.message;
-    } finally {
-      uploadBtn.disabled = false;
-    }
-  });
-
-  // ================== LOAD PHOTOS ==================
-  async function loadLatestPhotos() {
-    previewList.innerHTML = "Loading...";
-
-    const { data, error } = await supabase
-      .from("gallery_items")
-      .select("*")
-      .order("created_at", { ascending: false })
-      .limit(12);
-
-    if (error) {
-      previewList.textContent = "Error loading photos.";
-      return;
-    }
-
-    previewList.innerHTML = "";
-    data.forEach(row => {
-      const div = document.createElement("div");
-      div.className = "preview-item";
-      div.innerHTML = `
-        <img src="${row.public_url}">
-        <div>${row.caption || ""}</div>
-        <div style="font-size:11px;color:${row.visible ? '#7CFC00' : '#ff8080'};">
-          ${row.visible ? "Visible" : "Hidden"}
-        </div>
-        <button class="btn-small btn-delete"
-          onclick="deletePhoto(${row.id}, '${row.file_path}')">Delete</button>
-      `;
-      previewList.appendChild(div);
+  async function load(){
+    const {data}=await supabase.from("gallery_items")
+      .select("*").order("created_at",{ascending:false}).limit(12);
+    previewList.innerHTML="";
+    data.forEach(r=>{
+      previewList.innerHTML+=`
+        <div class="preview-item">
+          <img src="${r.public_url}">
+          <div>${r.caption||""}</div>
+          <button class="btn-small btn-delete"
+            onclick="del(${r.id},'${r.file_path}')">Delete</button>
+        </div>`;
     });
   }
 
-  // ================== DELETE ==================
-  async function deletePhoto(id, path) {
-    if (!confirm("Photo permanently delete hogi. Continue?")) return;
-
-    try {
-      await supabase.storage.from(BUCKET_NAME).remove([path]);
-      await supabase.from("gallery_items").delete().eq("id", id);
-      loadLatestPhotos();
-    } catch (err) {
-      alert("Delete error: " + err.message);
-    }
+  async function del(id,path){
+    if(!confirm("Delete permanently?")) return;
+    await supabase.storage.from(BUCKET).remove([path]);
+    await supabase.from("gallery_items").delete().eq("id",id);
+    load();
   }
 
-  loadLatestPhotos();
+  load();
 </script>
 
 </body>
