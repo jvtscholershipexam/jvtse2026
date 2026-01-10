@@ -2,24 +2,24 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Admit Card | BDS Mega Talent Hub</title>
+  <title>Admit Card | 2026 Jai Veer Tejaji Club</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <style>
     *{box-sizing:border-box;margin:0;padding:0;}
     body{
       font-family:Arial, sans-serif;
-      background:radial-gradient(circle at top,#1a4fff 0%,#000b33 55%,#000316 100%);
+      background:radial-gradient(circle at top,#0b4d2b 0%,#032015 55%,#02140d 100%);
       color:#fff;
     }
     header{
-      background:rgba(0,0,0,.7);
+      background:rgba(0,0,0,.8);
       padding:8px 14px;
       display:flex;
       align-items:center;
       justify-content:space-between;
       flex-wrap:wrap;
-      border-bottom:2px solid #ffbf00;
+      border-bottom:2px solid #d4af37;
     }
     .logo-text{
       font-size:18px;
@@ -28,6 +28,7 @@
       display:flex;
       align-items:center;
       gap:8px;
+      color:#ffd65a;
     }
     .logo-text img{
       height:38px;
@@ -46,12 +47,13 @@
     .container{max-width:900px;margin:18px auto;padding:0 10px;}
 
     .card{
-      background:rgba(0,0,0,0.65);
+      background:rgba(0,0,0,0.7);
       padding:14px;
-      border-radius:10px;
+      border-radius:12px;
       margin-bottom:15px;
+      border:1px solid rgba(255,255,255,0.15);
     }
-    h1{font-size:22px;margin-bottom:6px;}
+    h1{font-size:22px;margin-bottom:6px;color:#ffd65a;}
     label{display:block;font-size:14px;margin-top:6px;}
     input{
       width:100%;
@@ -63,10 +65,10 @@
     }
     .btn-primary{
       margin-top:10px;
-      padding:9px 20px;
+      padding:9px 22px;
       border-radius:999px;
       border:none;
-      background:#ffbf00;
+      background:#d4af37;
       color:#000;
       font-weight:bold;
       cursor:pointer;
@@ -84,144 +86,17 @@
       border:3px double #000;
     }
 
-    .admit-page{font-size:12px;}
-    .admit-copy{
-      position:relative;
-      border:2px solid #000;
-      border-radius:6px;
-      padding:8px 10px;
-      margin-bottom:10px;
-      min-height:260px;
-      overflow:hidden;
-    }
-    .copy-label{
-      text-align:right;
-      font-size:11px;
-      font-weight:bold;
-    }
-
-    .admit-header{
-      padding-bottom:4px;
-      border-bottom:1px solid #aaa;
-      margin-bottom:4px;
-    }
-    .admit-header-inner{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:10px;
-    }
-    .admit-header-center{
-      text-align:center;
-      flex:1;
-    }
-    .admit-header-center h2{
-      font-size:18px;
-      margin-bottom:2px;
-      color:#b20c0c;
-    }
-    .admit-header-center div{font-size:11px;}
-    .admit-header-logo{
-      height:65px;
-      width:auto;
-    }
-    .copy-type-text{
-      text-align:right;
-      font-size:11px;
-      font-weight:bold;
-      margin-top:2px;
-    }
-
-    .top-area{
-      display:flex;
-      justify-content:space-between;
-      gap:10px;
-      margin:4px 0;
-      align-items:flex-start;
-    }
-    .top-left{flex:1 1 auto;}
-    .photo-box{
-      width:80px;
-      height:95px;
-      border:1px solid #000;
-      border-radius:4px;
-      overflow:hidden;
-      background:#eee;
-      flex:0 0 auto;
-    }
-    .photo-box img{
-      width:100%;
-      height:100%;
-      object-fit:cover;
-      display:block;
-    }
-    .photo-placeholder{
-      font-size:9px;
-      text-align:center;
-      padding:4px;
-      color:#333;
-    }
-
-    .admit-row{
-      display:flex;
-      justify-content:space-between;
-      font-size:12px;
-      margin:2px 0;
-    }
-    .admit-row span.label{font-weight:bold;}
-
-    .admit-footer{
-      border-top:1px solid #aaa;
-      margin-top:4px;
-      padding-top:3px;
-      font-size:10px;
-    }
-
-    .sign-row{
-      display:flex;
-      justify-content:space-between;
-      margin-top:12px;
-      font-size:11px;
-      align-items:flex-end;
-    }
-    .sign-cell{
-      width:45%;
-      text-align:center;
-    }
-    .sign-line{
-      display:block;
-      border-top:1px solid #000;
-      margin:14px 0 3px;
-    }
-    .seal-img{
-      max-width:120px;
-      height:auto;
-      display:block;
-      margin:0 auto 4px;
-    }
-
-    .watermark{
-      position:absolute;
-      top:45%;
-      left:50%;
-      transform:translate(-50%,-50%) rotate(-25deg);
-      font-size:34px;
-      font-weight:900;
-      color:rgba(0,0,0,0.05);
-      pointer-events:none;
-      user-select:none;
-      letter-spacing:3px;
-    }
-
     footer{
       text-align:center;
       font-size:12px;
       padding:10px;
-      background:rgba(0,0,0,.9);
+      background:rgba(0,0,0,.95);
       margin-top:15px;
+      color:#ffd65a;
     }
   </style>
 
+  <!-- libs -->
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -230,8 +105,8 @@
 
 <header>
   <div class="logo-text">
-    <img src="bds-logo.png" alt="BDS Logo">
-    BABA DEEP SINGH MEGA TALENT HUB
+    <img src="bds-logo.png" alt="Logo">
+    2026 Jai Veer Tejaji Club
   </div>
   <nav>
     <a href="index.html">HOME</a>
@@ -246,6 +121,7 @@
 <div class="container">
   <div class="card">
     <h1>Download Admit Card</h1>
+
     <label>Roll Number</label>
     <input type="text" id="rollInput">
 
@@ -253,18 +129,24 @@
     <input type="date" id="dobInput">
 
     <button class="btn-primary" id="btnGet">Get Admit Card</button>
-    <button class="btn-primary" id="btnDownload" style="display:none;">Download Admit Card (PDF)</button>
+    <button class="btn-primary" id="btnDownload" style="display:none;">
+      Download Admit Card (PDF)
+    </button>
 
     <div id="msgBox"></div>
-    <div id="admitArea"><div class="admit-box" id="admitBox"></div></div>
+    <div id="admitArea">
+      <div class="admit-box" id="admitBox"></div>
+    </div>
   </div>
 </div>
 
-<footer>© 2026 Baba Deep Singh Mega Talent Hub</footer>
+<footer>© 2026 Jai Veer Tejaji Club</footer>
 
 <script>
+  /* ================= SUPABASE (FIXED) ================= */
   const SUPABASE_URL = "https://iqcbgiwycbuyvxpegmfg.supabase.co";
-  const SUPABASE_ANON_KEY = "sb_publishable_BCvr1Fx0v1JgAWVE90ittw_bThpVl8C";
+  const SUPABASE_ANON_KEY =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlxY2JnaXd5Y2J1eXZweGVnbWZnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc5NDQ4MDYsImV4cCI6MjA4MzUyMDgwNn0.WfFbOZw2ZRRX9bWxQ0HMUqskAfIL4MvoyAENFPPatjM";
 
   const { createClient } = supabase;
   const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
